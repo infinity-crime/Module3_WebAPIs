@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36616.10 d17.14
+VisualStudioVersion = 17.14.36616.10
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tasks1and2_SimpleApiWithDI", "Tasks1and2_SimpleApiWithDI\Tasks1and2_SimpleApiWithDI.csproj", "{65B61FC4-F58B-4EC4-AE58-B5F10EAA0571}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BooksKeeper.Domain", "BooksKeeper.Domain\BooksKeeper.Domain.csproj", "{45786CC2-0FEC-43A5-B0C5-B2AB54ED916E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{65B61FC4-F58B-4EC4-AE58-B5F10EAA0571}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{65B61FC4-F58B-4EC4-AE58-B5F10EAA0571}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{65B61FC4-F58B-4EC4-AE58-B5F10EAA0571}.Release|Any CPU.Build.0 = Release|Any CPU
+		{45786CC2-0FEC-43A5-B0C5-B2AB54ED916E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45786CC2-0FEC-43A5-B0C5-B2AB54ED916E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45786CC2-0FEC-43A5-B0C5-B2AB54ED916E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45786CC2-0FEC-43A5-B0C5-B2AB54ED916E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
