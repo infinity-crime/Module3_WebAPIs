@@ -1,0 +1,6 @@
+@Tasks1and2_SimpleApiWithDI_HostAddress = http://localhost:5191
+
+GET {{Tasks1and2_SimpleApiWithDI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
