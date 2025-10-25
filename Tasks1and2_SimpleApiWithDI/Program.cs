@@ -1,7 +1,9 @@
+using Tasks1and2_SimpleApiWithDI.Interfaces;
+using Tasks1and2_SimpleApiWithDI.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
+builder.Services.AddScoped<ITimeService, TimeService>(); // зарегестрируем сервис в DI
 builder.Services.AddControllers();
 
 var app = builder.Build();
