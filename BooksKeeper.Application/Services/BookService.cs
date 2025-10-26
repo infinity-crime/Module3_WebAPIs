@@ -16,13 +16,15 @@ namespace BooksKeeper.Application.Services
     {
         private readonly List<Book> _books = new List<Book>();
 
-        public Result<BookDto> CreateBook(CreateBookRequest request)
+        public async Task<Result<BookDto>> CreateBook(CreateBookRequest request)
         {
             try
             {
                 var newBook = Book.Create(request.Title, request.Author, request.Year);
 
                 _books.Add(newBook);
+
+                await Task.Delay(10);
 
                 return Result<BookDto>.Success(MapBookToDto(newBook));
             }
@@ -32,18 +34,20 @@ namespace BooksKeeper.Application.Services
             }
         }
 
-        public Result DeleteBook(Guid id)
+        public async Task<Result> DeleteBook(Guid id)
         {
             var bookIndex = _books.FindIndex(b => b.Id == id);
             if (bookIndex < 0)
                 return Result.Failure(Error.NotFound("BOOK_ID", "Book ID not found!"));
 
             _books.RemoveAt(bookIndex);
+            await Task.Delay(10);
             return Result.Success();
         }
 
-        public IEnumerable<BookDto>? GetAll()
+        public async Task<IEnumerable<BookDto>> GetAll()
         {
+            await Task.Delay(10);
             return _books.Select(b => new BookDto
             (
                 b.Id,
@@ -53,16 +57,17 @@ namespace BooksKeeper.Application.Services
             ));
         }
 
-        public Result<BookDto> GetBookById(Guid id)
+        public async Task<Result<BookDto>> GetBookById(Guid id)
         {
             var book = _books.FirstOrDefault(b => b.Id == id);
             if (book is null)
                 return Result<BookDto>.Failure(Error.NotFound("BOOK_ID", "Book ID not found!"));
 
+            await Task.Delay(10);
             return Result<BookDto>.Success(MapBookToDto(book));
         }
 
-        public Result UpdateBook(Guid id, UpdateBookRequest request)
+        public async Task<Result> UpdateBook(Guid id, UpdateBookRequest request)
         {
             var book = _books.FirstOrDefault(b => b.Id == id);
             if (book is null)
@@ -74,6 +79,8 @@ namespace BooksKeeper.Application.Services
                 book.ChangeAuthor(request.Author);
                 book.ChangeYear(request.Year);
 
+                await Task.Delay(10);
+
                 return Result.Success();
             }
             catch (DomainException ex)
@@ -82,7 +89,7 @@ namespace BooksKeeper.Application.Services
             }
         }
 
-        public BookDto MapBookToDto(Book book)
+        private BookDto MapBookToDto(Book book)
         {
             return new BookDto(book.Id, book.Title, book.Author, book.Year);
         }

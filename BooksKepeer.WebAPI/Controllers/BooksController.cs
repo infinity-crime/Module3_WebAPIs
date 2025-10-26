@@ -30,39 +30,39 @@ namespace BooksKepeer.WebAPI.Controllers
         }
 
         [HttpGet("all-books")]
-        public IActionResult GetAllBooks()
+        public async Task<IActionResult> GetAllBooks()
         {
-            return Ok(_bookService.GetAll());
+            return Ok(await _bookService.GetAll());
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetBook([FromRoute] Guid id)
+        public async Task<IActionResult> GetBook([FromRoute] Guid id)
         {
-            var result = _bookService.GetBookById(id);
+            var result = await _bookService.GetBookById(id);
 
             return HandleResult<BookDto>(result);
         }
 
         [HttpPost]
-        public IActionResult CreateBook([FromBody] CreateBookRequest request)
+        public async Task<IActionResult> CreateBook([FromBody] CreateBookRequest request)
         {
-            var result = _bookService.CreateBook(request);
+            var result = await _bookService.CreateBook(request);
 
             return HandleResult<BookDto>(result);
         }
 
         [HttpPut("update/{id}")]
-        public IActionResult UpdateBook([FromRoute] Guid id, [FromBody] UpdateBookRequest request)
+        public async Task<IActionResult> UpdateBook([FromRoute] Guid id, [FromBody] UpdateBookRequest request)
         {
-            var result = _bookService.UpdateBook(id, request);
+            var result = await _bookService.UpdateBook(id, request);
 
             return HandleResult(result);
         }
 
         [HttpDelete("delete/{id}")]
-        public IActionResult DeleteBook([FromRoute] Guid id)
+        public async Task<IActionResult> DeleteBook([FromRoute] Guid id)
         {
-            var result = _bookService.DeleteBook(id);
+            var result = await _bookService.DeleteBook(id);
 
             return HandleResult(result);
         }

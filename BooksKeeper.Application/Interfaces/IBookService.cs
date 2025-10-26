@@ -15,21 +15,21 @@ namespace BooksKeeper.Application.Interfaces
         /// Получение всего списка книг, которые хранятся в памяти
         /// </summary>
         /// <returns>Список книг</returns>
-        IEnumerable<BookDto>? GetAll();
+        Task<IEnumerable<BookDto>> GetAll();
 
         /// <summary>
         /// Получение книги по ее ID
         /// </summary>
         /// <param name="id">ID книги (Guid)</param>
         /// <returns></returns>
-        Result<BookDto> GetBookById(Guid id);
+        Task<Result<BookDto>> GetBookById(Guid id);
 
         /// <summary>
         /// Создание книги и добавление ее в список.
         /// </summary>
         /// <param name="request">Команда создания книги</param>
         /// <returns></returns>
-        Result<BookDto> CreateBook(CreateBookRequest request);
+        Task<Result<BookDto>> CreateBook(CreateBookRequest request);
 
         /// <summary>
         /// Обновление книги
@@ -37,13 +37,13 @@ namespace BooksKeeper.Application.Interfaces
         /// <param name="id">ID книги</param>
         /// <param name="request">Команда обновления книги</param>
         /// <returns></returns>
-        Result UpdateBook(Guid id, UpdateBookRequest request);
+        Task<Result> UpdateBook(Guid id, UpdateBookRequest request);
 
         /// <summary>
         /// Удаление выбранной книги
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Result DeleteBook(Guid id);
+        Task<Result> DeleteBook(Guid id);
     }
 }
