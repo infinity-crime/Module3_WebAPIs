@@ -45,6 +45,7 @@ builder.Services.AddSwaggerGen(o =>
     }
 });
 
+builder.Services.AddHealthChecks();
 
 var app = builder.Build();
 
@@ -66,5 +67,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHealthChecks("/healthz");
 
 app.Run();
