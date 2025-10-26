@@ -1,6 +1,7 @@
 using BooksKeeper.Application.Interfaces;
 using BooksKeeper.Application.Services;
 using BooksKepeer.WebAPI.Middleware;
+using BooksKepeer.WebAPI.Settings;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 
@@ -13,6 +14,9 @@ builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 builder.Services.AddControllers();
+
+// Читаем нашу конфигурацию из appsettings.json
+builder.Services.Configure<ApiSettings>(builder.Configuration.GetSection("ApiSettings"));
 
 
 var app = builder.Build();

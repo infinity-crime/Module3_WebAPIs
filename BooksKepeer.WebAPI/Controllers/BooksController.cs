@@ -2,9 +2,11 @@
 using BooksKeeper.Application.DTOs.Requests;
 using BooksKeeper.Application.Interfaces;
 using BooksKepeer.WebAPI.Common;
+using BooksKepeer.WebAPI.Settings;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.Extensions.Options;
 
 namespace BooksKepeer.WebAPI.Controllers
 {
@@ -13,10 +15,18 @@ namespace BooksKepeer.WebAPI.Controllers
     public class BooksController : BaseController
     {
         private readonly IBookService _bookService;
+        private readonly ApiSettings _apiSettings;
 
-        public BooksController(IBookService bookService)
+        public BooksController(IBookService bookService, IOptions<ApiSettings> apiOptions)
         {
             _bookService = bookService;
+            _apiSettings = apiOptions.Value;
+        }
+
+        [HttpGet("api-info")]
+        public IActionResult GetApiInfo()
+        {
+            return Ok(_apiSettings);
         }
 
         [HttpGet("all-books")]
