@@ -20,9 +20,9 @@ namespace BooksKeeper.Application.Interfaces
         /// <summary>
         /// Получение книги по ее ID
         /// </summary>
-        /// <param name="id">ID книги (int)</param>
+        /// <param name="id">ID книги (Guid)</param>
         /// <returns></returns>
-        Result<BookDto> GetBookById(int id);
+        Result<BookDto> GetBookById(Guid id);
 
         /// <summary>
         /// Создание книги и добавление ее в список.
@@ -37,13 +37,13 @@ namespace BooksKeeper.Application.Interfaces
         /// <param name="id">ID книги</param>
         /// <param name="request">Команда обновления книги</param>
         /// <returns></returns>
-        Result UpdateBook(int id, UpdateBookRequest request);
+        Result UpdateBook(Guid id, UpdateBookRequest request);
 
         /// <summary>
         /// Удаление выбранной книги
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Result DeleteBook(int id);
+        Result DeleteBook(Guid id);
     }
 }

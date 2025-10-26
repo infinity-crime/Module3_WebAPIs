@@ -1,6 +1,9 @@
+using BooksKeeper.Application.Interfaces;
+using BooksKeeper.Application.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder.Services.AddSingleton<IBookService, BookService>();
 
 builder.Services.AddControllers();
 

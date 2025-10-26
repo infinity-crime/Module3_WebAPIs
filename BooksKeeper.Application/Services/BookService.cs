@@ -20,7 +20,7 @@ namespace BooksKeeper.Application.Services
         {
             try
             {
-                var newBook = Book.Create(_books.Count, request.Title, request.Author, request.Year);
+                var newBook = Book.Create(request.Title, request.Author, request.Year);
 
                 _books.Add(newBook);
 
@@ -32,7 +32,7 @@ namespace BooksKeeper.Application.Services
             }
         }
 
-        public Result DeleteBook(int id)
+        public Result DeleteBook(Guid id)
         {
             var bookIndex = _books.FindIndex(b => b.Id == id);
             if (bookIndex < 0)
@@ -53,7 +53,7 @@ namespace BooksKeeper.Application.Services
             ));
         }
 
-        public Result<BookDto> GetBookById(int id)
+        public Result<BookDto> GetBookById(Guid id)
         {
             var book = _books.FirstOrDefault(b => b.Id == id);
             if (book is null)
@@ -62,7 +62,7 @@ namespace BooksKeeper.Application.Services
             return Result<BookDto>.Success(MapBookToDto(book));
         }
 
-        public Result UpdateBook(int id, UpdateBookRequest request)
+        public Result UpdateBook(Guid id, UpdateBookRequest request)
         {
             var book = _books.FirstOrDefault(b => b.Id == id);
             if (book is null)

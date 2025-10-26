@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace BooksKeeper.Application.DTOs
 {
-    public record BookDto(int Id, string Title, string Author, int Year);
+    public record BookDto(Guid Id, string Title, string Author, int Year);
 }

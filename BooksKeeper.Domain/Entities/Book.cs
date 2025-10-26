@@ -9,14 +9,14 @@ namespace BooksKeeper.Domain.Entities
 {
     public class Book
     {
-        public int Id { get; private set; }
+        public Guid Id { get; private set; }
         public string Title { get; private set; }
         public string Author { get; private set; }
         public int Year { get; private set; }
 
-        private Book(int id, string title, string author, int year)
+        private Book(string title, string author, int year)
         {
-            Id = id;
+            Id = Guid.NewGuid();
             Title = title;
             Author = author;
             Year = year;
@@ -25,11 +25,11 @@ namespace BooksKeeper.Domain.Entities
         /* Что касается валидации: кидать исключения с основного конструктора - не очень хорошая затея;
          * доменный объект сам отвечает за свою целостность и валидация здесь - последний рубеж валидации,
          * несмотря на то, что данные могут валидировать уровни выше (сервис, валидация DTO и тд). */
-        public static Book Create(int id, string title, string author, int year)
+        public static Book Create(string title, string author, int year)
         {
-            ValidateParameters(id, title, author, year); // вынесем валидацию в отдельной метод
+            ValidateParameters(title, author, year); // вынесем валидацию в отдельной метод
 
-            return new Book(id, title, author, year);
+            return new Book(title, author, year);
         }
 
         public void ChangeTitle(string title)
@@ -56,11 +56,8 @@ namespace BooksKeeper.Domain.Entities
             Author = author;
         }
 
-        private static void ValidateParameters(int id, string title, string author, int year)
+        private static void ValidateParameters(string title, string author, int year)
         {
-            if (id < 0)
-                throw new InvalidBookIdException("Book ID cannot be negative.");
-
             if (string.IsNullOrWhiteSpace(title))
                 throw new InvalidBookTitleException("The book title cannot be empty.");
 
