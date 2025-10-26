@@ -1,5 +1,6 @@
 using BooksKeeper.Application.Interfaces;
 using BooksKeeper.Application.Services;
+using BooksKepeer.WebAPI.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,8 @@ builder.Services.AddControllers();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+
+app.UseMiddleware<RequestTimingMiddleware>();
 
 app.UseHttpsRedirection();
 
