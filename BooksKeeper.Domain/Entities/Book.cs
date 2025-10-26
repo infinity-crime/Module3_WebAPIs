@@ -25,7 +25,7 @@ namespace BooksKeeper.Domain.Entities
         /* Что касается валидации: кидать исключения с основного конструктора - не очень хорошая затея;
          * доменный объект сам отвечает за свою целостность и валидация здесь - последний рубеж валидации,
          * несмотря на то, что данные могут валидировать уровни выше (сервис, валидация DTO и тд). */
-        public Book Create(int id, string title, string author, int year)
+        public static Book Create(int id, string title, string author, int year)
         {
             ValidateParameters(id, title, author, year); // вынесем валидацию в отдельной метод
 
@@ -48,7 +48,15 @@ namespace BooksKeeper.Domain.Entities
             Year = year;
         }
 
-        private void ValidateParameters(int id, string title, string author, int year)
+        public void ChangeAuthor(string author)
+        {
+            if (string.IsNullOrWhiteSpace(author))
+                throw new InvalidBookAuthorException("The author of the book must be filled in.");
+
+            Author = author;
+        }
+
+        private static void ValidateParameters(int id, string title, string author, int year)
         {
             if (id < 0)
                 throw new InvalidBookIdException("Book ID cannot be negative.");
