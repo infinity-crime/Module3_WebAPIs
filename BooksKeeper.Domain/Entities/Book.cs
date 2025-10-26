@@ -11,23 +11,25 @@ namespace BooksKeeper.Domain.Entities
     {
         public int Id { get; private set; }
         public string Title { get; private set; }
+        public string Author { get; private set; }
         public int Year { get; private set; }
 
-        private Book(int id, string title, int year)
+        private Book(int id, string title, string author, int year)
         {
             Id = id;
             Title = title;
+            Author = author;
             Year = year;
         }
 
         /* Что касается валидации: кидать исключения с основного конструктора - не очень хорошая затея;
          * доменный объект сам отвечает за свою целостность и валидация здесь - последний рубеж валидации,
          * несмотря на то, что данные могут валидировать уровни выше (сервис, валидация DTO и тд). */
-        public Book Create(int id, string title, int year)
+        public Book Create(int id, string title, string author, int year)
         {
-            ValidateParameters(id, title, year); // вынесем валидацию в отдельной метод
+            ValidateParameters(id, title, author, year); // вынесем валидацию в отдельной метод
 
-            return new Book(id, title, year);
+            return new Book(id, title, author, year);
         }
 
         public void ChangeTitle(string title)
@@ -46,13 +48,16 @@ namespace BooksKeeper.Domain.Entities
             Year = year;
         }
 
-        private void ValidateParameters(int id, string title, int year)
+        private void ValidateParameters(int id, string title, string author, int year)
         {
             if (id < 0)
                 throw new InvalidBookIdException("Book ID cannot be negative.");
 
             if (string.IsNullOrWhiteSpace(title))
                 throw new InvalidBookTitleException("The book title cannot be empty.");
+
+            if (string.IsNullOrWhiteSpace(author))
+                throw new InvalidBookAuthorException("The author of the book must be filled in.");
 
             if (year < 0)
                 throw new InvalidBookYearException("The year of the book cannot be negative.");
