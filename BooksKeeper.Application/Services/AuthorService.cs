@@ -70,14 +70,14 @@ namespace BooksKeeper.Application.Services
 
         public async Task<IEnumerable<AuthorResponse>> GetAllAsync()
         {
-            var authors = await _authorRepository.GetAllAsync();
+            var authors = await _authorRepository.GetAllWithBooksAsync();
 
             return authors.Select(a => MapToAuthorResponse(a));
         }
 
         public async Task<Result<AuthorResponse>> GetByIdAsync(Guid id)
         {
-            var author = await _authorRepository.GetByIdAsync(id);
+            var author = await _authorRepository.GetByIdWithBooksAsync(id);
             if (author is null)
                 return Result<AuthorResponse>.Failure(Error.NotFound("AUTHOR_NOT_FOUND", $"Author with ID {id} was not found."));
 

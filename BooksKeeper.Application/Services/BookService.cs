@@ -90,14 +90,14 @@ namespace BooksKeeper.Application.Services
 
         public async Task<IEnumerable<BookResponse>> GetAllAsync()
         {
-            var books = await _bookRepository.GetAllAsync();
+            var books = await _bookRepository.GetAllWithAuthorsAsync();
 
             return books.Select(b => MapToBookResponse(b));
         }
 
         public async Task<Result<BookResponse>> GetByIdAsync(Guid id)
         {
-            var book = await _bookRepository.GetByIdAsync(id);
+            var book = await _bookRepository.GetByIdWithAuthorsAsync(id);
             if(book is null)
                 return Result<BookResponse>.Failure(Error.NotFound("BOOK_NOT_FOUND", 
                     $"Book with ID '{id}' was not found."));
