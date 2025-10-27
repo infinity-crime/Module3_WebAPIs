@@ -13,7 +13,8 @@ namespace BooksKeeper.Domain.Entities
         public string Title { get; private set; }
         public int Year { get; private set; }
 
-        public ICollection<Author> Authors { get; set; } = new List<Author>();
+        private readonly List<Author> _authors = new List<Author>();
+        public IReadOnlyCollection<Author> Authors => _authors.AsReadOnly();
 
         private Book() { }
 
@@ -22,7 +23,7 @@ namespace BooksKeeper.Domain.Entities
          * несмотря на то, что данные могут валидировать уровни выше (сервис, валидация DTO и тд). */
         public static Book Create(string title, int year)
         {
-            ValidateParameters(title, year); // вынесем валидацию в отдельной метод
+            ValidateParameters(title, year); // вынесем валидацию в отдельный метод
 
             return new Book
             {
@@ -30,6 +31,40 @@ namespace BooksKeeper.Domain.Entities
                 Title = title,
                 Year = year
             };
+        }
+
+        public void AddAuthor(Author author)
+        {
+            if(author is null)
+                throw new InvalidBookAuthorException("The book author cannot be null.");
+
+            if (_authors.Any(a => a.Id == author.Id))
+                return;
+
+            _authors.Add(author);
+        }
+
+        public void AddAuthorsRange(IEnumerable<Author> authors)
+        {
+            if (authors is null || !authors.Any())
+                throw new InvalidBookAuthorException("The book authors collection cannot be null or empty.");
+
+            foreach (var author in authors)
+            {
+                AddAuthor(author);
+            }
+        }
+
+        public void ChangeAuthorsRange(IEnumerable<Author> authors)
+        {
+            if (authors is null || !authors.Any())
+                throw new InvalidBookAuthorException("The book authors collection cannot be null or empty.");
+
+            _authors.Clear();
+            foreach (var author in authors)
+            {
+                AddAuthor(author);
+            }
         }
 
         public void ChangeTitle(string title)

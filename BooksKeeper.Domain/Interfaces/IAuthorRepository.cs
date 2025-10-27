@@ -10,6 +10,6 @@ namespace BooksKeeper.Domain.Interfaces
 {
     public interface IAuthorRepository : IRepository<Author>
     {
-
+        Task<IEnumerable<Author>> GetByIdRangeAsync(List<Guid> ids);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using BooksKeeper.Domain.Common;
 using BooksKeeper.Domain.Exceptions.AuthorExceptions;
+using BooksKeeper.Domain.Exceptions.BookExceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,8 @@ namespace BooksKeeper.Domain.Entities
         public string FirstName { get; private set; }
         public string LastName { get; private set; }
 
-        public ICollection<Book> Books { get; set; } = new List<Book>();
+        private readonly List<Book> _books = new List<Book>();
+        public IReadOnlyCollection<Book> Books => _books.AsReadOnly();
 
         private Author() { }
 
@@ -27,6 +29,17 @@ namespace BooksKeeper.Domain.Entities
                 FirstName = firstName,
                 LastName = lastName
             };
+        }
+
+        public void AddBook(Book book)
+        {
+            if (book is null)
+                throw new InvalidBookAuthorException("The author book cannot be null.");
+
+            if (_books.Any(b => b.Id == book.Id))
+                return;
+
+            _books.Add(book);
         }
 
         public void ChangeFirstName(string firstName)
