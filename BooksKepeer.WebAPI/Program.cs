@@ -52,18 +52,18 @@ builder.Services.AddSwaggerGen(o =>
 
 builder.Services.AddHealthChecks();
 
-try
-{
-    using var connection = new NpgsqlConnection(builder.Configuration.GetConnectionString("DefaultConnection"));
+//try 
+//{
+//    using var connection = new NpgsqlConnection(builder.Configuration.GetConnectionString("DefaultConnection"));
 
-    connection.Open();
-    Console.WriteLine("Database connection is succes!");
-    connection.Close();
-}
-catch(Exception ex)
-{
-    Console.WriteLine($"Connection failed: {ex.Message}");
-}
+//    connection.Open();
+//    Console.WriteLine("Database connection is succes!");
+//    connection.Close();
+//}
+//catch(Exception ex)
+//{
+//    Console.WriteLine($"Connection failed: {ex.Message}");
+//}
 
 var app = builder.Build();
 

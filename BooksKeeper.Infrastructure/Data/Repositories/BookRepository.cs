@@ -27,6 +27,13 @@ namespace BooksKeeper.Infrastructure.Data.Repositories
                 .ToListAsync();
         }
 
+        public async Task<Book?> GetByIdForUpdateAsync(Guid id)
+        {
+            return await _dbContext.Books
+                .Include(b => b.Authors)
+                .FirstOrDefaultAsync();
+        }
+
         public async Task<Book?> GetByIdWithAuthorsAsync(Guid id)
         {
             return await _dbContext.Books

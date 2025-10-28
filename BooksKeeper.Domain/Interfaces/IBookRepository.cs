@@ -10,6 +10,8 @@ namespace BooksKeeper.Domain.Interfaces
 {
     public interface IBookRepository : IRepository<Book>
     {
+        Task<Book?> GetByIdForUpdateAsync(Guid id);
+
         Task<Book?> GetByIdWithAuthorsAsync(Guid id);
 
         Task<IEnumerable<Book>> GetAllWithAuthorsAsync();

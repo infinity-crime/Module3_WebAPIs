@@ -107,7 +107,7 @@ namespace BooksKeeper.Application.Services
 
         public async Task<Result> UpdateAsync(Guid id, UpdateBookRequest request)
         {
-            var book = await _bookRepository.GetByIdAsync(id);
+            var book = await _bookRepository.GetByIdForUpdateAsync(id);
             if (book is null)
                 return Result.Failure(Error.NotFound("BOOK_NOT_FOUND",
                     $"Book with ID '{id}' was not found."));
