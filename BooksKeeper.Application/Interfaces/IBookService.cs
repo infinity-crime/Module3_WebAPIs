@@ -4,6 +4,7 @@ using BooksKeeper.Application.DTOs.Requests;
 using BooksKeeper.Application.DTOs.Requests.BookRequests;
 using BooksKeeper.Application.DTOs.Responses;
 using BooksKeeper.Application.Interfaces.Common;
+using BooksKeeper.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,5 +36,7 @@ namespace BooksKeeper.Application.Interfaces
         /// <param name="request">Команда создания книги и автора</param>
         /// <returns></returns>
         Task<Result<BookResponse>> CreateWithAuthorAsync(CreateBookWithAuthorRequest request);
+
+        Task<IEnumerable<BookYearCountDto>> GetCountBooksByYearAsync();
     }
 }

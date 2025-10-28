@@ -1,6 +1,7 @@
 ﻿using BooksKeeper.Domain.Entities;
 using BooksKeeper.Domain.Interfaces;
 using BooksKeeper.Infrastructure.Data.Repositories.Common;
+using Dapper;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -25,6 +26,18 @@ namespace BooksKeeper.Infrastructure.Data.Repositories
                 .Include(b => b.Authors)
                 .AsNoTracking()
                 .ToListAsync();
+        }
+
+        public async Task<IEnumerable<BookYearCountDto>> GetBooksCountByYearAsync()
+        {
+            using var connection = _dbContext.Database.GetDbConnection();
+            const string sql = @"
+                SELECT ""Year"", COUNT(*) AS ""Count""
+                FROM ""Books""
+                GROUP BY ""Year""
+                ORDER BY ""Year""";
+
+            return await connection.QueryAsync<BookYearCountDto>(sql);
         }
 
         public async Task<Book?> GetByIdForUpdateAsync(Guid id)

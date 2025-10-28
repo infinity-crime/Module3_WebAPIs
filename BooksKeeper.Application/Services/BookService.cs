@@ -147,6 +147,11 @@ namespace BooksKeeper.Application.Services
             return Result<BookResponse>.Success(MapToBookResponse(book));
         }
 
+        public async Task<IEnumerable<BookYearCountDto>> GetCountBooksByYearAsync()
+        {
+            return await _bookRepository.GetBooksCountByYearAsync();
+        }
+
         public async Task<Result> UpdateAsync(Guid id, UpdateBookRequest request)
         {
             var book = await _bookRepository.GetByIdForUpdateAsync(id);

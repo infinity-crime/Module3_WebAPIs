@@ -61,6 +61,13 @@ namespace BooksKepeer.WebAPI.Controllers
             return HandleResult<BookResponse>(result);
         }
 
+        [HttpGet("count-books-by-year")]
+        public async Task<IActionResult> GetCountBooksByYear()
+        {
+            var result = await _bookService.GetCountBooksByYearAsync();
+            return Ok(result);
+        }
+
         /// <summary>
         /// Создание книги
         /// </summary>

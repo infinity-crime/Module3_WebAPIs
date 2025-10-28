@@ -19,5 +19,14 @@ namespace BooksKeeper.Domain.Interfaces
         // сделаем метод для добавления книги без SaveChangesAsync()
         // чтобы использовать в транзакции (паттерн единица работы добавлять не будем)
         Task AddWithoutSaveAsync(Book book);
+
+        Task<IEnumerable<BookYearCountDto>> GetBooksCountByYearAsync();
     }
+
+    /// <summary>
+    /// DTO для представления количества книг по годам (в качестве теста для задания с Dapper)
+    /// </summary>
+    /// <param name="Year"></param>
+    /// <param name="Count"></param>
+    public record BookYearCountDto(int Year, long Count);
 }
