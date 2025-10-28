@@ -14,6 +14,11 @@ namespace BooksKeeper.Infrastructure.Data.Repositories
     {
         public AuthorRepository(ApplicationDbContext dbContext) : base(dbContext) { }
 
+        public async Task AddWithoutSaveAsync(Author author)
+        {
+            await _dbContext.Authors.AddAsync(author);
+        }
+
         public async Task<IEnumerable<Author>> GetAllWithBooksAsync()
         {
             return await _dbContext.Authors

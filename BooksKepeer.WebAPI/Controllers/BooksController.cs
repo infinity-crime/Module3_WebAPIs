@@ -39,7 +39,7 @@ namespace BooksKepeer.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Получение списка книг из памяти (может быть пустым)
+        /// Получение списка книг
         /// </summary>
         /// <returns>Список книг</returns>
         [HttpGet("all-books")]
@@ -62,7 +62,7 @@ namespace BooksKepeer.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Создание книги в списке
+        /// Создание книги
         /// </summary>
         /// <param name="request">Запрос (DTO) с данными для создания</param>
         /// <returns>Созданная книга</returns>
@@ -70,6 +70,19 @@ namespace BooksKepeer.WebAPI.Controllers
         public async Task<IActionResult> CreateBook([FromBody] CreateBookRequest request)
         {
             var result = await _bookService.CreateAsync(request);
+
+            return HandleResult<BookResponse>(result);
+        }
+
+        /// <summary>
+        /// Создание книги и автора одновременно
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost("/create-book-and-author")]
+        public async Task<IActionResult> CreateBookWithAuthor([FromBody] CreateBookWithAuthorRequest request)
+        {
+            var result = await _bookService.CreateWithAuthorAsync(request);
 
             return HandleResult<BookResponse>(result);
         }

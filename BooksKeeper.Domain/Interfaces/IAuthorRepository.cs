@@ -15,5 +15,9 @@ namespace BooksKeeper.Domain.Interfaces
         Task<IEnumerable<Author>> GetAllWithBooksAsync();
 
         Task<IEnumerable<Author>> GetByIdRangeAsync(List<Guid> ids);
+
+        // сделаем метод для добавления автора без SaveChangesAsync()
+        // чтобы использовать в транзакции (паттерн единица работы добавлять не будем)
+        Task AddWithoutSaveAsync(Author author);
     }
 }

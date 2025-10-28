@@ -16,7 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BooksKeeper.Application\BooksKeeper.Application.csproj" />
     <ProjectReference Include="..\BooksKeeper.Domain\BooksKeeper.Domain.csproj" />
   </ItemGroup>
 
