@@ -1,15 +1,20 @@
+using BooksKeeper.Application;
 using BooksKeeper.Application.Interfaces;
 using BooksKeeper.Application.Services;
+using BooksKeeper.Infrastructure;
 using BooksKepeer.WebAPI.Middleware;
 using BooksKepeer.WebAPI.Settings;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Npgsql;
 using Swashbuckle.AspNetCore;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddSingleton<IBookService, BookService>();
+// Регистрация сервисов приложения и инфраструктуры с помощью extension методов
+builder.Services.AddApplicationServices();
+builder.Services.AddInfrastructureServices(builder.Configuration);
 
 // Регистрация FluentValidation
 builder.Services.AddFluentValidationAutoValidation();
@@ -46,6 +51,19 @@ builder.Services.AddSwaggerGen(o =>
 });
 
 builder.Services.AddHealthChecks();
+
+try
+{
+    using var connection = new NpgsqlConnection(builder.Configuration.GetConnectionString("DefaultConnection"));
+
+    connection.Open();
+    Console.WriteLine("Database connection is succes!");
+    connection.Close();
+}
+catch(Exception ex)
+{
+    Console.WriteLine($"Connection failed: {ex.Message}");
+}
 
 var app = builder.Build();
 

@@ -1,0 +1,17 @@
+services:
+  postgres:	
+    image: postgres:16
+    container_name: BooksKeeper-Db-Container
+    restart: always
+    ports:
+      - "5433:5432"
+    volumes:
+      - BooksKeeper-Db-Data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: BooksKeeperDB
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 554034
+      POSTGRES_HOST_AUTH_METHOD: trust
+
+volumes:
+  BooksKeeper-Db-Data:

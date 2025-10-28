@@ -1,5 +1,7 @@
 ﻿using BooksKeeper.Application.DTOs;
 using BooksKeeper.Application.DTOs.Requests;
+using BooksKeeper.Application.DTOs.Requests.BookRequests;
+using BooksKeeper.Application.DTOs.Responses;
 using BooksKeeper.Application.Interfaces;
 using BooksKepeer.WebAPI.Common;
 using BooksKepeer.WebAPI.Settings;
@@ -43,7 +45,7 @@ namespace BooksKepeer.WebAPI.Controllers
         [HttpGet("all-books")]
         public async Task<IActionResult> GetAllBooks()
         {
-            return Ok(await _bookService.GetAll());
+            return Ok(await _bookService.GetAllAsync());
         }
 
         /// <summary>
@@ -54,9 +56,9 @@ namespace BooksKepeer.WebAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetBook([FromRoute] Guid id)
         {
-            var result = await _bookService.GetBookById(id);
+            var result = await _bookService.GetByIdAsync(id);
 
-            return HandleResult<BookDto>(result);
+            return HandleResult<BookResponse>(result);
         }
 
         /// <summary>
@@ -67,9 +69,9 @@ namespace BooksKepeer.WebAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateBook([FromBody] CreateBookRequest request)
         {
-            var result = await _bookService.CreateBook(request);
+            var result = await _bookService.CreateAsync(request);
 
-            return HandleResult<BookDto>(result);
+            return HandleResult<BookResponse>(result);
         }
 
         /// <summary>
@@ -81,7 +83,7 @@ namespace BooksKepeer.WebAPI.Controllers
         [HttpPut("update/{id}")]
         public async Task<IActionResult> UpdateBook([FromRoute] Guid id, [FromBody] UpdateBookRequest request)
         {
-            var result = await _bookService.UpdateBook(id, request);
+            var result = await _bookService.UpdateAsync(id, request);
 
             return HandleResult(result);
         }
@@ -94,7 +96,7 @@ namespace BooksKepeer.WebAPI.Controllers
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteBook([FromRoute] Guid id)
         {
-            var result = await _bookService.DeleteBook(id);
+            var result = await _bookService.DeleteByIdAsync(id);
 
             return HandleResult(result);
         }

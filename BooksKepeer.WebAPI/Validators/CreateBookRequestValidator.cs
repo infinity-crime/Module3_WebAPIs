@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
 using BooksKeeper.Application.DTOs.Requests;
+using BooksKeeper.Application.DTOs.Requests.BookRequests;
 
 namespace BooksKepeer.WebAPI.Validators
 {
