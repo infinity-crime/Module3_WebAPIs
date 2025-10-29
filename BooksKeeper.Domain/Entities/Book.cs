@@ -67,6 +67,11 @@ namespace BooksKeeper.Domain.Entities
             }
         }
 
+        public void DeleteAuthors()
+        {
+            _authors.Clear();
+        }
+
         public void ChangeTitle(string title)
         {
             if (string.IsNullOrWhiteSpace(title))

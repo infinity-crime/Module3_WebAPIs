@@ -42,7 +42,13 @@ namespace BooksKeeper.Application.Services
             try
             {
                 var newBook = Book.Create(request.Title, request.Year);
+
                 var authors = await _authorRepository.GetByIdRangeAsync(request.AuthorIds);
+                var missingIds = ValidateAuthorsExists(request.AuthorIds, authors);
+                if(missingIds is not null)
+                    return Result<BookResponse>.Failure(Error.NotFound("AUTHORS_NOT_FOUND",
+                        $"One or more authors were not found. Missing author IDs: {string.Join(',', missingIds)}"));
+
                 newBook.AddAuthorsRange(authors);
 
                 await _bookRepository.AddAsync(newBook);
@@ -66,7 +72,7 @@ namespace BooksKeeper.Application.Services
             }
         }
 
-        // Здесь используем механизм транзакций, чтобы обеспечить атомарность.
+        // Здесь используем механизм транзакций, чтобы обеспечить атомарность (так как запись сразу в 2 таблицы).
         public async Task<Result<BookResponse>> CreateWithAuthorAsync(CreateBookWithAuthorRequest request)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -108,13 +114,14 @@ namespace BooksKeeper.Application.Services
 
         public async Task<Result> DeleteByIdAsync(Guid id)
         {
-            var book = await _bookRepository.GetByIdAsync(id, false, false);
+            var book = await _bookRepository.GetByIdAsync(id, true, true);
             if (book is null)
                 return Result.Failure(Error.NotFound("BOOK_NOT_FOUND",
                     $"Book with ID '{id}' was not found."));
 
             try
-            {            
+            {
+                book.DeleteAuthors();
                 _bookRepository.DeleteAsync(book);
 
                 await _unitOfWork.SaveChangesAsync();
@@ -159,10 +166,15 @@ namespace BooksKeeper.Application.Services
 
             try
             {
+                var authors = await _authorRepository.GetByIdRangeAsync(request.AuthorIds);
+                var missingIds = ValidateAuthorsExists(request.AuthorIds, authors);
+                if (missingIds is not null)
+                    return Result.Failure(Error.NotFound("AUTHORS_NOT_FOUND",
+                        $"One or more authors were not found. Missing author IDs: {string.Join(',', missingIds)}"));
+
+                book.ChangeAuthorsRange(authors);
                 book.ChangeTitle(request.Title);
                 book.ChangeYear(request.Year);
-                var authors = await _authorRepository.GetByIdRangeAsync(request.AuthorIds);
-                book.ChangeAuthorsRange(authors);
 
                 _bookRepository.UpdateAsync(book);
 
@@ -195,6 +207,23 @@ namespace BooksKeeper.Application.Services
                 book.Authors
                     .Select(a => new AuthorDto(a.Id, a.FirstName, a.LastName))
                     .ToList());
+        }
+
+        /* 
+         * Данный метод проверяет, все ли ID авторов нашлись из запроса или нет.
+         * Если нет => возвращает список ID, которые не были найдены
+         */
+        private List<Guid>? ValidateAuthorsExists(List<Guid> ids, IEnumerable<Author> authors)
+        {
+            if(ids.Count != authors.Count())
+            {
+                var existingIds = authors.Select(a => a.Id).ToList();
+                var missingIds = ids.Except(existingIds).ToList();
+
+                return missingIds;
+            }
+
+            return null;
         }
     }
 }
