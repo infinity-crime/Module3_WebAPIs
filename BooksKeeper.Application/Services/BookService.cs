@@ -42,20 +42,13 @@ namespace BooksKeeper.Application.Services
             try
             {
                 var newBook = Book.Create(request.Title, request.Year);
-
                 var authors = await _authorRepository.GetByIdRangeAsync(request.AuthorIds);
-
                 newBook.AddAuthorsRange(authors);
 
                 await _bookRepository.AddAsync(newBook);
+                await _unitOfWork.SaveChangesAsync();
 
-                return Result<BookResponse>.Success(new BookResponse(
-                    newBook.Id,
-                    newBook.Title,
-                    newBook.Year,
-                    newBook.Authors
-                    .Select(a => new AuthorDto(a.Id, a.FirstName, a.LastName)).ToList()
-                    ));
+                return Result<BookResponse>.Success(MapToBookResponse(newBook));
             }
             catch(InvalidBookAuthorException ex)
             {
@@ -84,8 +77,8 @@ namespace BooksKeeper.Application.Services
                 var newAuthor = Author.Create(request.AuthorFirstName, request.AuthorLastName);
                 newBook.AddAuthor(newAuthor);
 
-                await _bookRepository.AddWithoutSaveAsync(newBook);
-                await _authorRepository.AddWithoutSaveAsync(newAuthor);
+                await _bookRepository.AddAsync(newBook);
+                await _authorRepository.AddAsync(newAuthor);
 
                 await _unitOfWork.CommitTransactionAsync();
 
@@ -115,14 +108,16 @@ namespace BooksKeeper.Application.Services
 
         public async Task<Result> DeleteByIdAsync(Guid id)
         {
-            var book = await _bookRepository.GetByIdAsync(id);
+            var book = await _bookRepository.GetByIdAsync(id, false, false);
             if (book is null)
                 return Result.Failure(Error.NotFound("BOOK_NOT_FOUND",
                     $"Book with ID '{id}' was not found."));
 
             try
             {            
-                await _bookRepository.DeleteAsync(book);
+                _bookRepository.DeleteAsync(book);
+
+                await _unitOfWork.SaveChangesAsync();
 
                 return Result.Success();
             }
@@ -135,14 +130,14 @@ namespace BooksKeeper.Application.Services
 
         public async Task<IEnumerable<BookResponse>> GetAllAsync()
         {
-            var books = await _bookRepository.GetAllWithAuthorsAsync();
+            var books = await _bookRepository.GetAllAsync(true);
 
             return books.Select(b => MapToBookResponse(b));
         }
 
         public async Task<Result<BookResponse>> GetByIdAsync(Guid id)
         {
-            var book = await _bookRepository.GetByIdWithAuthorsAsync(id);
+            var book = await _bookRepository.GetByIdAsync(id, true, false);
             if(book is null)
                 return Result<BookResponse>.Failure(Error.NotFound("BOOK_NOT_FOUND", 
                     $"Book with ID '{id}' was not found."));
@@ -157,7 +152,7 @@ namespace BooksKeeper.Application.Services
 
         public async Task<Result> UpdateAsync(Guid id, UpdateBookRequest request)
         {
-            var book = await _bookRepository.GetByIdForUpdateAsync(id);
+            var book = await _bookRepository.GetByIdAsync(id, true, true);
             if (book is null)
                 return Result.Failure(Error.NotFound("BOOK_NOT_FOUND",
                     $"Book with ID '{id}' was not found."));
@@ -166,11 +161,12 @@ namespace BooksKeeper.Application.Services
             {
                 book.ChangeTitle(request.Title);
                 book.ChangeYear(request.Year);
-
                 var authors = await _authorRepository.GetByIdRangeAsync(request.AuthorIds);
                 book.ChangeAuthorsRange(authors);
 
-                await _bookRepository.UpdateAsync(book);
+                _bookRepository.UpdateAsync(book);
+
+                await _unitOfWork.SaveChangesAsync();
 
                 return Result.Success();
             }

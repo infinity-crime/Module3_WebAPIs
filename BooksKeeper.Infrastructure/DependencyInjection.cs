@@ -2,6 +2,7 @@
 using BooksKeeper.Domain.Interfaces.Common;
 using BooksKeeper.Infrastructure.Data;
 using BooksKeeper.Infrastructure.Data.Repositories;
+using BooksKeeper.Infrastructure.Data.Repositories.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,6 +27,7 @@ namespace BooksKeeper.Infrastructure
 
             services.AddScoped<IBookRepository, BookRepository>();
             services.AddScoped<IAuthorRepository, AuthorRepository>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             return services;
         }

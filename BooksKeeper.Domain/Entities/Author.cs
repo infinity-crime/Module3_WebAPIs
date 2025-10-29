@@ -42,6 +42,11 @@ namespace BooksKeeper.Domain.Entities
             _books.Add(book);
         }
 
+        public void DeleteAllBooks()
+        {
+            _books.Clear();
+        }
+
         public void ChangeFirstName(string firstName)
         {
             if (string.IsNullOrWhiteSpace(firstName))

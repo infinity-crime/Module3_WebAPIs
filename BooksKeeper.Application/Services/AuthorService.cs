@@ -6,6 +6,7 @@ using BooksKeeper.Application.Interfaces;
 using BooksKeeper.Domain.Entities;
 using BooksKeeper.Domain.Exceptions.Common;
 using BooksKeeper.Domain.Interfaces;
+using BooksKeeper.Domain.Interfaces.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,9 +19,12 @@ namespace BooksKeeper.Application.Services
     {
         private readonly IAuthorRepository _authorRepository;
 
-        public AuthorService(IAuthorRepository authorRepository)
+        private readonly IUnitOfWork _unitOfWork;
+
+        public AuthorService(IAuthorRepository authorRepository, IUnitOfWork unitOfWork)
         {
             _authorRepository = authorRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<Result<AuthorDto>> CreateAsync(CreateAuthorRequest request)
@@ -31,12 +35,9 @@ namespace BooksKeeper.Application.Services
 
                 await _authorRepository.AddAsync(newAuthor);
 
-                return Result<AuthorDto>.Success(new AuthorDto
-                (
-                    newAuthor.Id,
-                    newAuthor.FirstName,
-                    newAuthor.LastName
-                ));
+                await _unitOfWork.SaveChangesAsync();
+
+                return Result<AuthorDto>.Success(MapToDto(newAuthor));
             }
             catch(DomainException ex)
             {
@@ -51,13 +52,16 @@ namespace BooksKeeper.Application.Services
 
         public async Task<Result> DeleteByIdAsync(Guid id)
         {
-            var author = await _authorRepository.GetByIdAsync(id);
+            var author = await _authorRepository.GetByIdAsync(id, true, true);
             if (author is null)
                 return Result.Failure(Error.NotFound("AUTHOR_NOT_FOUND", $"Author with ID {id} was not found."));
 
             try
             {
-                await _authorRepository.DeleteAsync(author);
+                author.DeleteAllBooks();
+                _authorRepository.DeleteAsync(author);
+
+                await _unitOfWork.SaveChangesAsync();
 
                 return Result.Success();
             }
@@ -70,14 +74,14 @@ namespace BooksKeeper.Application.Services
 
         public async Task<IEnumerable<AuthorResponse>> GetAllAsync()
         {
-            var authors = await _authorRepository.GetAllWithBooksAsync();
+            var authors = await _authorRepository.GetAllAsync(true);
 
             return authors.Select(a => MapToAuthorResponse(a));
         }
 
         public async Task<Result<AuthorResponse>> GetByIdAsync(Guid id)
         {
-            var author = await _authorRepository.GetByIdWithBooksAsync(id);
+            var author = await _authorRepository.GetByIdAsync(id, true, false);
             if (author is null)
                 return Result<AuthorResponse>.Failure(Error.NotFound("AUTHOR_NOT_FOUND", $"Author with ID {id} was not found."));
 
@@ -86,7 +90,7 @@ namespace BooksKeeper.Application.Services
 
         public async Task<Result> UpdateAsync(Guid id, UpdateAuthorRequest request)
         {
-            var author = await _authorRepository.GetByIdAsync(id);
+            var author = await _authorRepository.GetByIdAsync(id, false, true);
             if (author is null)
                 return Result.Failure(Error.NotFound("AUTHOR_NOT_FOUND", $"Author with ID {id} was not found."));
 
@@ -95,7 +99,10 @@ namespace BooksKeeper.Application.Services
                 author.ChangeFirstName(request.FirstName);
                 author.ChangeLastName(request.LastName);
 
-                await _authorRepository.UpdateAsync(author);
+                _authorRepository.UpdateAsync(author);
+
+                await _unitOfWork.SaveChangesAsync();
+
                 return Result.Success();
             }
             catch (DomainException ex)
@@ -120,6 +127,11 @@ namespace BooksKeeper.Application.Services
                 .Select(b => new BookDto(b.Id, b.Title, b.Year))
                 .ToList()
             );
+        }
+
+        private AuthorDto MapToDto(Author author)
+        {
+            return new AuthorDto(author.Id, author.FirstName, author.LastName);
         }
     }
 }
