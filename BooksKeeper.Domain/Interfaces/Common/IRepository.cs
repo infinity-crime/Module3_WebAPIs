@@ -8,11 +8,12 @@ namespace BooksKeeper.Domain.Interfaces.Common
 {
     public interface IRepository<T> where T : class
     {
-        Task<T?> GetByIdAsync(Guid id);
-        Task<IReadOnlyCollection<T>> GetAllAsync();
         Task AddAsync(T entity);
-        Task UpdateAsync(T entity);
-        Task DeleteAsync(T entity);
+
+        void UpdateAsync(T entity);
+
+        void DeleteAsync(T entity);
+
         Task<bool> ExistsAsync(Guid id);
     }
 }

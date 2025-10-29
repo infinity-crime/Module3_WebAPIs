@@ -15,17 +15,28 @@ namespace BooksKeeper.Infrastructure.Data.Repositories
     {
         public BookRepository(ApplicationDbContext dbContext) : base(dbContext) { }
 
-        public async Task AddWithoutSaveAsync(Book book)
+        public async Task<Book?> GetByIdAsync(Guid id, bool includeAuthors, bool trackingEnable)
         {
-            await _dbContext.Books.AddAsync(book);
+            var query = _dbContext.Books.AsQueryable();
+
+            if (!trackingEnable)
+                query = query.AsNoTracking();
+
+            if (includeAuthors)
+                query = query.Include(b => b.Authors);
+
+            return await query.FirstOrDefaultAsync(b => b.Id == id);
         }
 
-        public async Task<IEnumerable<Book>> GetAllWithAuthorsAsync()
+        public async Task<IEnumerable<Book>> GetAllAsync(bool includeAuthors)
         {
-            return await _dbContext.Books
-                .Include(b => b.Authors)
-                .AsNoTracking()
-                .ToListAsync();
+            var query = _dbContext.Books
+                .AsNoTracking();
+
+            if (includeAuthors)
+                query = query.Include(b => b.Authors);
+
+            return await query.ToListAsync();
         }
 
         public async Task<IEnumerable<BookYearCountDto>> GetBooksCountByYearAsync()
@@ -38,21 +49,6 @@ namespace BooksKeeper.Infrastructure.Data.Repositories
                 ORDER BY ""Year""";
 
             return await connection.QueryAsync<BookYearCountDto>(sql);
-        }
-
-        public async Task<Book?> GetByIdForUpdateAsync(Guid id)
-        {
-            return await _dbContext.Books
-                .Include(b => b.Authors)
-                .FirstOrDefaultAsync();
-        }
-
-        public async Task<Book?> GetByIdWithAuthorsAsync(Guid id)
-        {
-            return await _dbContext.Books
-                .Include(b => b.Authors)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(b => b.Id == id);
         }
     }
 }

@@ -22,15 +22,16 @@ namespace BooksKeeper.Infrastructure.Data.Repositories.Common
         public async Task AddAsync(T entity)
         {
             await _dbContext.Set<T>().AddAsync(entity);
-
-            await _dbContext.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(T entity)
+        public void UpdateAsync(T entity)
+        {
+            _dbContext.Update(entity);
+        }
+
+        public void DeleteAsync(T entity)
         {
             _dbContext.Set<T>().Remove(entity);
-
-            await _dbContext.SaveChangesAsync();
         }
 
         public async Task<bool> ExistsAsync(Guid id)
@@ -40,27 +41,6 @@ namespace BooksKeeper.Infrastructure.Data.Repositories.Common
                 .FirstOrDefaultAsync(e => e.Id == id);
 
             return entity != null;
-        }
-
-        public async Task<IReadOnlyCollection<T>> GetAllAsync()
-        {
-            return await _dbContext.Set<T>()
-                .AsNoTracking()
-                .ToListAsync();
-        }
-
-        public async Task<T?> GetByIdAsync(Guid id)
-        {
-            return await _dbContext.Set<T>()
-                .AsNoTracking()
-                .FirstOrDefaultAsync(e => e.Id == id);
-        }
-
-        public async Task UpdateAsync(T entity)
-        {
-            _dbContext.Update(entity);
-
-            await _dbContext.SaveChangesAsync();
         }
     }
 }

@@ -14,17 +14,28 @@ namespace BooksKeeper.Infrastructure.Data.Repositories
     {
         public AuthorRepository(ApplicationDbContext dbContext) : base(dbContext) { }
 
-        public async Task AddWithoutSaveAsync(Author author)
+        public async Task<Author?> GetByIdAsync(Guid id, bool includeBooks, bool trackingEnable)
         {
-            await _dbContext.Authors.AddAsync(author);
+            var query = _dbContext.Authors.AsQueryable();
+
+            if (!trackingEnable)
+                query = query.AsNoTracking();
+
+            if (includeBooks)
+                query = query.Include(a => a.Books);
+
+            return await query.FirstOrDefaultAsync(a => a.Id == id);
         }
 
-        public async Task<IEnumerable<Author>> GetAllWithBooksAsync()
+        public async Task<IEnumerable<Author>> GetAllAsync(bool includeBooks)
         {
-            return await _dbContext.Authors
-                .Include(a => a.Books)
-                .AsNoTracking()
-                .ToListAsync();
+            var query = _dbContext.Authors
+                .AsNoTracking();
+
+            if (includeBooks)
+                query = query.Include(a => a.Books);
+
+            return await query.ToListAsync();
         }
 
         public async Task<IEnumerable<Author>> GetByIdRangeAsync(List<Guid> ids)
@@ -32,14 +43,6 @@ namespace BooksKeeper.Infrastructure.Data.Repositories
             return await _dbContext.Authors
                 .Where(a => ids.Contains(a.Id))
                 .ToListAsync();
-        }
-
-        public async Task<Author?> GetByIdWithBooksAsync(Guid id)
-        {
-            return await _dbContext.Authors
-                .Include(a => a.Books)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(a => a.Id == id);
         }
     }
 }

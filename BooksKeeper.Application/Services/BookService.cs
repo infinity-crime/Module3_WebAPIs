@@ -15,6 +15,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BooksKeeper.Infrastructure.Data;
 using System.Runtime.CompilerServices;
+using BooksKeeper.Domain.Interfaces.Common;
 
 namespace BooksKeeper.Application.Services
 {
@@ -22,12 +23,17 @@ namespace BooksKeeper.Application.Services
     {
         private readonly IBookRepository _bookRepository;
         private readonly IAuthorRepository _authorRepository;
+
+        private readonly IUnitOfWork _unitOfWork;
+
         private readonly ApplicationDbContext _context;
 
-        public BookService(IBookRepository bookRepository, IAuthorRepository authorRepository, ApplicationDbContext context)
+        public BookService(IBookRepository bookRepository, IAuthorRepository authorRepository, 
+            ApplicationDbContext context, IUnitOfWork unitOfWork)
         {
             _bookRepository = bookRepository;
             _authorRepository = authorRepository;
+            _unitOfWork = unitOfWork;
             _context = context;
         }
 
@@ -70,40 +76,37 @@ namespace BooksKeeper.Application.Services
         // Здесь используем механизм транзакций, чтобы обеспечить атомарность.
         public async Task<Result<BookResponse>> CreateWithAuthorAsync(CreateBookWithAuthorRequest request)
         {
-            using var transaction = await _context.Database.BeginTransactionAsync();
+            await _unitOfWork.BeginTransactionAsync();
 
             try
             {
                 var newBook = Book.Create(request.Title, request.Year);
                 var newAuthor = Author.Create(request.AuthorFirstName, request.AuthorLastName);
-
                 newBook.AddAuthor(newAuthor);
 
                 await _bookRepository.AddWithoutSaveAsync(newBook);
                 await _authorRepository.AddWithoutSaveAsync(newAuthor);
 
-                await _context.SaveChangesAsync();
-
-                await transaction.CommitAsync();
+                await _unitOfWork.CommitTransactionAsync();
 
                 return Result<BookResponse>.Success(MapToBookResponse(newBook));
             }
             catch(InvalidBookAuthorException ex)
             {
-                await transaction.RollbackAsync();
+                await _unitOfWork.RollbackTransactionAsync();
 
                 return Result<BookResponse>.Failure(Error.NotFound(ex.Code, $"One or more of the author IDs from the list are missing " +
                     $"from the database. Details: {ex.Message}"));
             }
             catch(DomainException ex)
             {
-                await transaction.RollbackAsync();
+                await _unitOfWork.RollbackTransactionAsync();
 
                 return Result<BookResponse>.Failure(Error.Validation(ex.Code, ex.Message));
             }
             catch (Exception ex)
             {
-                await transaction.RollbackAsync();
+                await _unitOfWork.RollbackTransactionAsync();
 
                 return Result<BookResponse>.Failure(Error.Failure("BOOK_AUTHOR_CREATE_FAILURE",
                     $"An error occurred while creating book and author. Details: {ex.Message}"));

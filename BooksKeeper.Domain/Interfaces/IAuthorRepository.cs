@@ -10,14 +10,10 @@ namespace BooksKeeper.Domain.Interfaces
 {
     public interface IAuthorRepository : IRepository<Author>
     {
-        Task<Author?> GetByIdWithBooksAsync(Guid id);
+        Task<Author?> GetByIdAsync(Guid id, bool includeBooks, bool trackingEnable);
 
-        Task<IEnumerable<Author>> GetAllWithBooksAsync();
+        Task<IEnumerable<Author>> GetAllAsync(bool includeBooks);
 
         Task<IEnumerable<Author>> GetByIdRangeAsync(List<Guid> ids);
-
-        // сделаем метод для добавления автора без SaveChangesAsync()
-        // чтобы использовать в транзакции (паттерн единица работы добавлять не будем)
-        Task AddWithoutSaveAsync(Author author);
     }
 }
