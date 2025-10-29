@@ -1,5 +1,7 @@
 ﻿using BooksKeeper.Application.DTOs;
 using BooksKeeper.Application.DTOs.Requests;
+using BooksKeeper.Application.DTOs.Requests.BookRequests;
+using BooksKeeper.Application.DTOs.Responses;
 using BooksKeeper.Application.Interfaces;
 using BooksKepeer.WebAPI.Common;
 using BooksKepeer.WebAPI.Settings;
@@ -37,13 +39,13 @@ namespace BooksKepeer.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Получение списка книг из памяти (может быть пустым)
+        /// Получение списка книг
         /// </summary>
         /// <returns>Список книг</returns>
         [HttpGet("all-books")]
         public async Task<IActionResult> GetAllBooks()
         {
-            return Ok(await _bookService.GetAll());
+            return Ok(await _bookService.GetAllAsync());
         }
 
         /// <summary>
@@ -54,22 +56,42 @@ namespace BooksKepeer.WebAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetBook([FromRoute] Guid id)
         {
-            var result = await _bookService.GetBookById(id);
+            var result = await _bookService.GetByIdAsync(id);
 
-            return HandleResult<BookDto>(result);
+            return HandleResult<BookResponse>(result);
+        }
+
+        [HttpGet("count-books-by-year")]
+        public async Task<IActionResult> GetCountBooksByYear()
+        {
+            var result = await _bookService.GetCountBooksByYearAsync();
+            return Ok(result);
         }
 
         /// <summary>
-        /// Создание книги в списке
+        /// Создание книги
         /// </summary>
         /// <param name="request">Запрос (DTO) с данными для создания</param>
         /// <returns>Созданная книга</returns>
         [HttpPost]
         public async Task<IActionResult> CreateBook([FromBody] CreateBookRequest request)
         {
-            var result = await _bookService.CreateBook(request);
+            var result = await _bookService.CreateAsync(request);
 
-            return HandleResult<BookDto>(result);
+            return HandleResult<BookResponse>(result);
+        }
+
+        /// <summary>
+        /// Создание книги и автора одновременно
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost("/create-book-and-author")]
+        public async Task<IActionResult> CreateBookWithAuthor([FromBody] CreateBookWithAuthorRequest request)
+        {
+            var result = await _bookService.CreateWithAuthorAsync(request);
+
+            return HandleResult<BookResponse>(result);
         }
 
         /// <summary>
@@ -81,7 +103,7 @@ namespace BooksKepeer.WebAPI.Controllers
         [HttpPut("update/{id}")]
         public async Task<IActionResult> UpdateBook([FromRoute] Guid id, [FromBody] UpdateBookRequest request)
         {
-            var result = await _bookService.UpdateBook(id, request);
+            var result = await _bookService.UpdateAsync(id, request);
 
             return HandleResult(result);
         }
@@ -94,7 +116,7 @@ namespace BooksKepeer.WebAPI.Controllers
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteBook([FromRoute] Guid id)
         {
-            var result = await _bookService.DeleteBook(id);
+            var result = await _bookService.DeleteByIdAsync(id);
 
             return HandleResult(result);
         }
