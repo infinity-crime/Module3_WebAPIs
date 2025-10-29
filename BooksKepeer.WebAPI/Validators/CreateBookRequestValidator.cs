@@ -5,8 +5,14 @@ using BooksKeeper.Application.DTOs.Requests.BookRequests;
 
 namespace BooksKepeer.WebAPI.Validators
 {
+    /// <summary>
+    /// Валидатор для запроса создания книги
+    /// </summary>
     public class CreateBookRequestValidator : AbstractValidator<CreateBookRequest>
     {
+        /// <summary>
+        /// Определение правил валидации
+        /// </summary>
         public CreateBookRequestValidator()
         {
             RuleFor(x => x.Title)

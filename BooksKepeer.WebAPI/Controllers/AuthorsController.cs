@@ -10,7 +10,8 @@ using System.Runtime.CompilerServices;
 namespace BooksKepeer.WebAPI.Controllers
 {
     /// <summary>
-    /// Контроллер для управления авторами
+    /// Контроллер для управления авторами.
+    /// Примечание: добавление книг авторам доступно только через обновление книги (BooksController).
     /// </summary>
     [Route("api/[controller]")]
     public class AuthorsController : BaseController
@@ -22,12 +23,21 @@ namespace BooksKepeer.WebAPI.Controllers
             _service = service;
         }
 
+        /// <summary>
+        /// Получение всех авторов из БД вместе с их книгами
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("all-authors")]
         public async Task<IActionResult> GetAllAuthors()
         {
             return Ok(await _service.GetAllAsync());
         }
 
+        /// <summary>
+        /// Получение автора по его Id с его книгами
+        /// </summary>
+        /// <param name="id">Id автора (Guid)</param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAuthorById([FromRoute] Guid id)
         {
@@ -36,6 +46,11 @@ namespace BooksKepeer.WebAPI.Controllers
             return HandleResult<AuthorResponse>(author);
         }
 
+        /// <summary>
+        /// Создание автора без добавления ему книг
+        /// </summary>
+        /// <param name="request">Запрос создания автора, включающий имя и фамилию</param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> CreateAuthor([FromBody] CreateAuthorRequest request)
         {
@@ -44,6 +59,12 @@ namespace BooksKepeer.WebAPI.Controllers
             return HandleResult<AuthorDto>(newAuthor);
         }
 
+        /// <summary>
+        /// Обновление автора (только имя и фамилия, без добавления и удаления книг)
+        /// </summary>
+        /// <param name="id">Id автора (Guid)</param>
+        /// <param name="request">Запрос обновления автора, включающий имя и фамилию</param>
+        /// <returns></returns>
         [HttpPut("/update/{id}")]
         public async Task<IActionResult> UpdateAuthor([FromRoute] Guid id, UpdateAuthorRequest request)
         {
@@ -52,6 +73,11 @@ namespace BooksKepeer.WebAPI.Controllers
             return HandleResult(result);
         }
 
+        /// <summary>
+        /// Удаление автора вместе с его зависимости (обнуляются у книг, но сами книги не удаляются).
+        /// </summary>
+        /// <param name="id">Id автора (Guid)</param>
+        /// <returns></returns>
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteAuthor([FromRoute] Guid id)
         {

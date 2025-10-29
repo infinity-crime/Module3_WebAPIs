@@ -52,19 +52,6 @@ builder.Services.AddSwaggerGen(o =>
 
 builder.Services.AddHealthChecks();
 
-//try 
-//{
-//    using var connection = new NpgsqlConnection(builder.Configuration.GetConnectionString("DefaultConnection"));
-
-//    connection.Open();
-//    Console.WriteLine("Database connection is succes!");
-//    connection.Close();
-//}
-//catch(Exception ex)
-//{
-//    Console.WriteLine($"Connection failed: {ex.Message}");
-//}
-
 var app = builder.Build();
 
 // Подключаем непосредственно настроенный Swagger

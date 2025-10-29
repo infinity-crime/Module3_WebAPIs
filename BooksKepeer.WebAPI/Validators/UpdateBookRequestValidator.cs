@@ -3,8 +3,14 @@ using FluentValidation;
 
 namespace BooksKepeer.WebAPI.Validators
 {
+    /// <summary>
+    /// Валидатор для запроса обновления книги
+    /// </summary>
     public class UpdateBookRequestValidator : AbstractValidator<UpdateBookRequest>
     {
+        /// <summary>
+        /// Определение правил валидации
+        /// </summary>
         public UpdateBookRequestValidator()
         {
             RuleFor(x => x.Title)
