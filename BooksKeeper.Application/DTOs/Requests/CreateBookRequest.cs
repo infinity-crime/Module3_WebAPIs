@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BooksKeeper.Application.DTOs
+namespace BooksKeeper.Application.DTOs.Requests
 {
-    public record AuthorDto(Guid Id, string FirstName, string LastName);
+    public record CreateBookRequest(string Title, string Author, int Year);
 }
