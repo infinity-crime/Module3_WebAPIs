@@ -66,6 +66,9 @@ namespace BooksKeeper.Application.Services
 
                 await _unitOfWork.SaveChangesAsync();
 
+                // сброс тухлого кэша
+                await _cacheService.RemoveAsync($"author:{id}");
+
                 return Result.Success();
             }
             catch (Exception ex)
@@ -84,7 +87,7 @@ namespace BooksKeeper.Application.Services
 
         public async Task<Result<AuthorResponse>> GetByIdAsync(Guid id)
         {
-            var cachedAuthor = await _cacheService.GetAsync<AuthorResponse>($"author_{id}");
+            var cachedAuthor = await _cacheService.GetAsync<AuthorResponse>($"author:{id}");
             if(cachedAuthor is not null)
             {
                 Console.WriteLine("Автор получен из Redis");
@@ -95,7 +98,7 @@ namespace BooksKeeper.Application.Services
             if (author is null)
                 return Result<AuthorResponse>.Failure(Error.NotFound("AUTHOR_NOT_FOUND", $"Author with ID {id} was not found."));
 
-            await _cacheService.SetAsync<AuthorResponse>($"author_{id}", MapToAuthorResponse(author), TimeSpan.FromMinutes(10));
+            await _cacheService.SetAsync<AuthorResponse>($"author:{id}", MapToAuthorResponse(author), TimeSpan.FromMinutes(10));
 
             Console.WriteLine("Автор получен из базы данных");
 
@@ -116,6 +119,9 @@ namespace BooksKeeper.Application.Services
                 _authorRepository.UpdateAsync(author);
 
                 await _unitOfWork.SaveChangesAsync();
+
+                // сброс тухлого кэша
+                await _cacheService.RemoveAsync($"author:{id}");
 
                 return Result.Success();
             }

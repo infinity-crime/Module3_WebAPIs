@@ -128,6 +128,9 @@ namespace BooksKeeper.Application.Services
 
                 await _unitOfWork.SaveChangesAsync();
 
+                // сброс тухлого кэша
+                await _cacheService.RemoveAsync($"book:{id}");
+
                 return Result.Success();
             }
             catch (Exception ex)
@@ -192,6 +195,9 @@ namespace BooksKeeper.Application.Services
                 _bookRepository.UpdateAsync(book);
 
                 await _unitOfWork.SaveChangesAsync();
+
+                // сброс тухлого кэша
+                await _cacheService.RemoveAsync($"book:{id}");
 
                 return Result.Success();
             }
