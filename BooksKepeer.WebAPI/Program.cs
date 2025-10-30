@@ -6,7 +6,7 @@ using BooksKepeer.WebAPI.Middleware;
 using BooksKepeer.WebAPI.Settings;
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using Npgsql;
+using StackExchange.Redis;
 using Swashbuckle.AspNetCore;
 using System.Reflection;
 
@@ -53,6 +53,24 @@ builder.Services.AddSwaggerGen(o =>
 builder.Services.AddHealthChecks();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+    try
+    {
+        var mux = scope.ServiceProvider.GetRequiredService<IConnectionMultiplexer>();
+        var db = mux.GetDatabase();
+
+        var pong = await db.PingAsync();
+
+        logger.LogInformation("Connected to Redis successfully. Ping: {Ping} ms", pong.TotalMilliseconds);
+    }
+    catch(Exception ex)
+    {
+        logger.LogError(ex, "Redis connection error");
+    }
+}
 
 // Подключаем непосредственно настроенный Swagger
 if(app.Environment.IsDevelopment())
