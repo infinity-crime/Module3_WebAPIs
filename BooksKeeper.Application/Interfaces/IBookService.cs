@@ -37,6 +37,10 @@ namespace BooksKeeper.Application.Interfaces
         /// <returns></returns>
         Task<Result<BookResponse>> CreateWithAuthorAsync(CreateBookWithAuthorRequest request);
 
-        Task<IEnumerable<BookYearCountDto>> GetCountBooksByYearAsync();
+        /// <summary>
+        /// Метод, использующий Dapper для получения количества книг по годам.
+        /// </summary>
+        /// <returns></returns>
+        Task<IEnumerable<BookYearCountResponse>> GetCountBooksByYearAsync();
     }
 }

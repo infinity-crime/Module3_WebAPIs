@@ -61,6 +61,10 @@ namespace BooksKepeer.WebAPI.Controllers
             return HandleResult<BookResponse>(result);
         }
 
+        /// <summary>
+        /// Метод, использующий Dapper для получения количества книг по годам.
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("count-books-by-year")]
         public async Task<IActionResult> GetCountBooksByYear()
         {

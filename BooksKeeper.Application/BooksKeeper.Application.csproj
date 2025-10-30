@@ -12,7 +12,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BooksKeeper.Domain\BooksKeeper.Domain.csproj" />
-	<ProjectReference Include="..\BooksKeeper.Infrastructure\BooksKeeper.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

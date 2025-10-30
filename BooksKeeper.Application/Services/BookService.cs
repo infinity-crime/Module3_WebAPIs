@@ -13,7 +13,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BooksKeeper.Infrastructure.Data;
 using System.Runtime.CompilerServices;
 using BooksKeeper.Domain.Interfaces.Common;
 
@@ -23,18 +22,17 @@ namespace BooksKeeper.Application.Services
     {
         private readonly IBookRepository _bookRepository;
         private readonly IAuthorRepository _authorRepository;
+        private readonly IBookDapperRepository<BookYearCountResponse> _bookDapperRepository;
 
         private readonly IUnitOfWork _unitOfWork;
 
-        private readonly ApplicationDbContext _context;
-
         public BookService(IBookRepository bookRepository, IAuthorRepository authorRepository, 
-            ApplicationDbContext context, IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork, IBookDapperRepository<BookYearCountResponse> bookDapperRepository)
         {
             _bookRepository = bookRepository;
             _authorRepository = authorRepository;
             _unitOfWork = unitOfWork;
-            _context = context;
+            _bookDapperRepository = bookDapperRepository;
         }
 
         public async Task<Result<BookResponse>> CreateAsync(CreateBookRequest request)
@@ -152,9 +150,9 @@ namespace BooksKeeper.Application.Services
             return Result<BookResponse>.Success(MapToBookResponse(book));
         }
 
-        public async Task<IEnumerable<BookYearCountDto>> GetCountBooksByYearAsync()
+        public async Task<IEnumerable<BookYearCountResponse>> GetCountBooksByYearAsync()
         {
-            return await _bookRepository.GetBooksCountByYearAsync();
+            return await _bookDapperRepository.GetBooksByYearCountAsync();
         }
 
         public async Task<Result> UpdateAsync(Guid id, UpdateBookRequest request)

@@ -1,4 +1,5 @@
-﻿using BooksKeeper.Domain.Interfaces;
+﻿using BooksKeeper.Application.DTOs.Responses;
+using BooksKeeper.Domain.Interfaces;
 using BooksKeeper.Domain.Interfaces.Common;
 using BooksKeeper.Infrastructure.Data;
 using BooksKeeper.Infrastructure.Data.Repositories;
@@ -27,6 +28,7 @@ namespace BooksKeeper.Infrastructure
 
             services.AddScoped<IBookRepository, BookRepository>();
             services.AddScoped<IAuthorRepository, AuthorRepository>();
+            services.AddScoped<IBookDapperRepository<BookYearCountResponse>, BookDapperRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             return services;
