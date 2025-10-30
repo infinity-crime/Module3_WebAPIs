@@ -26,13 +26,17 @@ namespace BooksKeeper.Application.Services
 
         private readonly IUnitOfWork _unitOfWork;
 
+        private readonly ICacheService _cacheService;
+
         public BookService(IBookRepository bookRepository, IAuthorRepository authorRepository, 
-            IUnitOfWork unitOfWork, IBookDapperRepository<BookYearCountResponse> bookDapperRepository)
+            IUnitOfWork unitOfWork, IBookDapperRepository<BookYearCountResponse> bookDapperRepository, 
+            ICacheService cacheService)
         {
             _bookRepository = bookRepository;
             _authorRepository = authorRepository;
             _unitOfWork = unitOfWork;
             _bookDapperRepository = bookDapperRepository;
+            _cacheService = cacheService;
         }
 
         public async Task<Result<BookResponse>> CreateAsync(CreateBookRequest request)
@@ -142,10 +146,21 @@ namespace BooksKeeper.Application.Services
 
         public async Task<Result<BookResponse>> GetByIdAsync(Guid id)
         {
+            var cachedBook = await _cacheService.GetAsync<BookResponse>($"book:{id}");
+            if(cachedBook is not null)
+            {
+                Console.WriteLine("Книга получена из Redis");
+                return Result<BookResponse>.Success(cachedBook);
+            }
+
             var book = await _bookRepository.GetByIdAsync(id, true, false);
             if(book is null)
                 return Result<BookResponse>.Failure(Error.NotFound("BOOK_NOT_FOUND", 
                     $"Book with ID '{id}' was not found."));
+
+            await _cacheService.SetAsync($"book:{id}", MapToBookResponse(book), TimeSpan.FromMinutes(10));
+
+            Console.WriteLine("Книга получена из базы данных");
 
             return Result<BookResponse>.Success(MapToBookResponse(book));
         }

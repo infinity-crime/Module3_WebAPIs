@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace BooksKeeper.Infrastructure.Caching
 {
-    public class CacheService : ICacheService
+    public class RedisDistributedCacheService : ICacheService
     {
         private readonly IDistributedCache _cache;
         private readonly JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions
@@ -17,7 +17,7 @@ namespace BooksKeeper.Infrastructure.Caching
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
         };
 
-        public CacheService(IDistributedCache cache)
+        public RedisDistributedCacheService(IDistributedCache cache)
         {
             _cache = cache;
         }

@@ -1,6 +1,8 @@
 ﻿using BooksKeeper.Application.DTOs.Responses;
+using BooksKeeper.Application.Interfaces;
 using BooksKeeper.Domain.Interfaces;
 using BooksKeeper.Domain.Interfaces.Common;
+using BooksKeeper.Infrastructure.Caching;
 using BooksKeeper.Infrastructure.Data;
 using BooksKeeper.Infrastructure.Data.Repositories;
 using BooksKeeper.Infrastructure.Data.Repositories.Common;
@@ -28,11 +30,12 @@ namespace BooksKeeper.Infrastructure
                 options.UseNpgsql(connectionStringDb);
             });
 
-            // Регистрация репозиториев и UoW (для транзакций)
+            // Регистрация репозиториев, UoW (для транзакций), сервиса кэширования
             services.AddScoped<IBookRepository, BookRepository>();
             services.AddScoped<IAuthorRepository, AuthorRepository>();
             services.AddScoped<IBookDapperRepository<BookYearCountResponse>, BookDapperRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<ICacheService, RedisDistributedCacheService>();
 
             // Получение настроек Redis из конфигурации
             var redisConnectionString = configuration["Redis:RedisConnectionString"];

@@ -21,10 +21,13 @@ namespace BooksKeeper.Application.Services
 
         private readonly IUnitOfWork _unitOfWork;
 
-        public AuthorService(IAuthorRepository authorRepository, IUnitOfWork unitOfWork)
+        private readonly ICacheService _cacheService;
+
+        public AuthorService(IAuthorRepository authorRepository, IUnitOfWork unitOfWork, ICacheService cacheService)
         {
             _authorRepository = authorRepository;
             _unitOfWork = unitOfWork;
+            _cacheService = cacheService;
         }
 
         public async Task<Result<AuthorDto>> CreateAsync(CreateAuthorRequest request)
@@ -81,9 +84,20 @@ namespace BooksKeeper.Application.Services
 
         public async Task<Result<AuthorResponse>> GetByIdAsync(Guid id)
         {
+            var cachedAuthor = await _cacheService.GetAsync<AuthorResponse>($"author_{id}");
+            if(cachedAuthor is not null)
+            {
+                Console.WriteLine("Автор получен из Redis");
+                return Result<AuthorResponse>.Success(cachedAuthor);
+            }
+
             var author = await _authorRepository.GetByIdAsync(id, true, false);
             if (author is null)
                 return Result<AuthorResponse>.Failure(Error.NotFound("AUTHOR_NOT_FOUND", $"Author with ID {id} was not found."));
+
+            await _cacheService.SetAsync<AuthorResponse>($"author_{id}", MapToAuthorResponse(author), TimeSpan.FromMinutes(10));
+
+            Console.WriteLine("Автор получен из базы данных");
 
             return Result<AuthorResponse>.Success(MapToAuthorResponse(author));
         }
