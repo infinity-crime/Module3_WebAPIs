@@ -8,6 +8,7 @@ using BooksKepeer.WebAPI.Settings;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.AspNetCore.OutputCaching;
 using Microsoft.Extensions.Options;
 
 namespace BooksKepeer.WebAPI.Controllers
@@ -43,6 +44,7 @@ namespace BooksKepeer.WebAPI.Controllers
         /// </summary>
         /// <returns>Список книг</returns>
         [HttpGet("all-books")]
+        [OutputCache(PolicyName = "BookPolicy")]
         public async Task<IActionResult> GetAllBooks()
         {
             return Ok(await _bookService.GetAllAsync());

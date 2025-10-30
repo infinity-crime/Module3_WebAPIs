@@ -25,6 +25,14 @@ builder.Services.AddControllers();
 // Читаем нашу конфигурацию из appsettings.json
 builder.Services.Configure<ApiSettings>(builder.Configuration.GetSection("ApiSettings"));
 
+builder.Services.AddOutputCache(options =>
+{
+    options.AddPolicy("BookPolicy", builder =>
+    {
+        builder.Expire(TimeSpan.FromSeconds(60));
+    });
+});
+
 // настройка документации Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(o =>
@@ -50,27 +58,10 @@ builder.Services.AddSwaggerGen(o =>
     }
 });
 
+// Регистрация health checks
 builder.Services.AddHealthChecks();
 
 var app = builder.Build();
-
-using (var scope = app.Services.CreateScope())
-{
-    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-    try
-    {
-        var mux = scope.ServiceProvider.GetRequiredService<IConnectionMultiplexer>();
-        var db = mux.GetDatabase();
-
-        var pong = await db.PingAsync();
-
-        logger.LogInformation("Connected to Redis successfully. Ping: {Ping} ms", pong.TotalMilliseconds);
-    }
-    catch(Exception ex)
-    {
-        logger.LogError(ex, "Redis connection error");
-    }
-}
 
 // Подключаем непосредственно настроенный Swagger
 if(app.Environment.IsDevelopment())
@@ -89,8 +80,12 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
+// Включаем кэширование HTTP ответов
+app.UseOutputCache();
+
 app.MapControllers();
 
+// Эндпоинт для проверки здоровья сервиса
 app.MapHealthChecks("/healthz");
 
 app.Run();
