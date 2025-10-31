@@ -11,7 +11,7 @@ namespace BooksKeeper.Domain.Common
     public abstract class BaseMongoEntity<T>
     {
         [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
+        [BsonRepresentation(BsonType.String)]
         public T Id { get; protected set; }
     }
 }
