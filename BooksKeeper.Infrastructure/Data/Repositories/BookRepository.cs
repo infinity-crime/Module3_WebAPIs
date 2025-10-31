@@ -38,17 +38,5 @@ namespace BooksKeeper.Infrastructure.Data.Repositories
 
             return await query.ToListAsync();
         }
-
-        public async Task<IEnumerable<BookYearCountDto>> GetBooksCountByYearAsync()
-        {
-            using var connection = _dbContext.Database.GetDbConnection();
-            const string sql = @"
-                SELECT ""Year"", COUNT(*) AS ""Count""
-                FROM ""Books""
-                GROUP BY ""Year""
-                ORDER BY ""Year""";
-
-            return await connection.QueryAsync<BookYearCountDto>(sql);
-        }
     }
 }

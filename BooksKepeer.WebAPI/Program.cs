@@ -1,12 +1,12 @@
 using BooksKeeper.Application;
 using BooksKeeper.Application.Interfaces;
+using BooksKeeper.Application.POCO.Settings;
 using BooksKeeper.Application.Services;
 using BooksKeeper.Infrastructure;
 using BooksKepeer.WebAPI.Middleware;
-using BooksKepeer.WebAPI.Settings;
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using Npgsql;
+using StackExchange.Redis;
 using Swashbuckle.AspNetCore;
 using System.Reflection;
 
@@ -24,6 +24,15 @@ builder.Services.AddControllers();
 
 // Читаем нашу конфигурацию из appsettings.json
 builder.Services.Configure<ApiSettings>(builder.Configuration.GetSection("ApiSettings"));
+builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection("Mongo"));
+
+builder.Services.AddOutputCache(options =>
+{
+    options.AddPolicy("BookPolicy", builder =>
+    {
+        builder.Expire(TimeSpan.FromSeconds(60));
+    });
+});
 
 // настройка документации Swagger
 builder.Services.AddEndpointsApiExplorer();
@@ -50,6 +59,7 @@ builder.Services.AddSwaggerGen(o =>
     }
 });
 
+// Регистрация health checks
 builder.Services.AddHealthChecks();
 
 var app = builder.Build();
@@ -71,8 +81,12 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
+// Включаем кэширование HTTP ответов
+app.UseOutputCache();
+
 app.MapControllers();
 
+// Эндпоинт для проверки здоровья сервиса
 app.MapHealthChecks("/healthz");
 
 app.Run();

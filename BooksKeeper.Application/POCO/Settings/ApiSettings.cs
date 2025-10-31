@@ -1,4 +1,10 @@
-﻿namespace BooksKepeer.WebAPI.Settings
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BooksKeeper.Application.POCO.Settings
 {
     public class ApiSettings
     {

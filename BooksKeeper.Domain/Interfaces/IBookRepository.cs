@@ -29,18 +29,5 @@ namespace BooksKeeper.Domain.Interfaces
         /// <param name="includeAuthors">bool переменная для включения авторов в ответ</param>
         /// <returns></returns>
         Task<IEnumerable<Book>> GetAllAsync(bool includeAuthors);
-
-        /// <summary>
-        /// Получение результирующей выборки кол-ва книг по годам при помощи Dapper
-        /// </summary>
-        /// <returns></returns>
-        Task<IEnumerable<BookYearCountDto>> GetBooksCountByYearAsync();
     }
-
-    /// <summary>
-    /// DTO для представления количества книг по годам (в качестве теста для задания с Dapper)
-    /// </summary>
-    /// <param name="Year"></param>
-    /// <param name="Count"></param>
-    public record BookYearCountDto(int Year, long Count);
 }
