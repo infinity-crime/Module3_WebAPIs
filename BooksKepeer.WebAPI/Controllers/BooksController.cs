@@ -21,12 +21,14 @@ namespace BooksKepeer.WebAPI.Controllers
     public class BooksController : BaseController
     {
         private readonly IBookService _bookService;
+        private readonly IProductDetailsService _productDetailsService;
         private readonly ApiSettings _apiSettings;
 
-        public BooksController(IBookService bookService, IOptions<ApiSettings> apiOptions)
+        public BooksController(IBookService bookService, IOptions<ApiSettings> apiOptions, IProductDetailsService productDetailsService)
         {
             _bookService = bookService;
             _apiSettings = apiOptions.Value;
+            _productDetailsService = productDetailsService;
         }
 
         /// <summary>
@@ -61,6 +63,14 @@ namespace BooksKepeer.WebAPI.Controllers
             var result = await _bookService.GetByIdAsync(id);
 
             return HandleResult<BookResponse>(result);
+        }
+
+        [HttpGet("{id}/details")]
+        public async Task<IActionResult> GetBookDetails([FromRoute] Guid id, CancellationToken cancellationToken)
+        {
+            var result = await _productDetailsService.GetBookDetailsAsync(id, cancellationToken);
+
+            return HandleResult<ProductDetailsResponse>(result);
         }
 
         /// <summary>
