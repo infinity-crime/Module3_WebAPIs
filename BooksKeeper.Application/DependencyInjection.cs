@@ -15,6 +15,7 @@ namespace BooksKeeper.Application
         {
             services.AddScoped<IBookService, BookService>();
             services.AddScoped<IAuthorService, AuthorService>();
+            services.AddScoped<IProductReviewService, ProductReviewService>();
 
             return services;
         }

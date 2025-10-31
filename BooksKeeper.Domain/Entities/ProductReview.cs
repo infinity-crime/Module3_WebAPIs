@@ -30,7 +30,7 @@ namespace BooksKeeper.Domain.Entities
         [BsonConstructor]
         private ProductReview() { }
 
-        public ProductReview Create(Guid bookId, string reviewerName, int rating, string comment)
+        public static ProductReview Create(Guid bookId, string reviewerName, int rating, string comment)
         {
             if(string.IsNullOrWhiteSpace(reviewerName))
                 throw new InvalidReviewerNameException("Reviewer name cannot be null or empty.");

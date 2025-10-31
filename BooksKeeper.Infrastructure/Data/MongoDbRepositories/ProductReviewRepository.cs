@@ -54,11 +54,5 @@ namespace BooksKeeper.Infrastructure.Data.MongoDbRepositories
             return await _collection.Find(filter)
                 .FirstOrDefaultAsync(cancellationToken);
         }
-
-        public Task UpdateAsync(ProductReview review, CancellationToken cancellationToken = default)
-        {
-            var filter = Builders<ProductReview>.Filter.Eq(pr => pr.Id, review.Id);
-            return _collection.ReplaceOneAsync(filter, review, new ReplaceOptions(), cancellationToken);
-        }
     }
 }

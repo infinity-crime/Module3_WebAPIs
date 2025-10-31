@@ -15,8 +15,6 @@ namespace BooksKeeper.Domain.Interfaces
 
         Task AddAsync(ProductReview review, CancellationToken cancellationToken = default);
 
-        Task UpdateAsync(ProductReview review, CancellationToken cancellationToken = default);
-
         Task<IEnumerable<ProductReview>> GetByBookIdAsync(Guid id, CancellationToken cancellationToken = default);
 
         Task DeleteByIdAsync(string id, CancellationToken cancellationToken = default);

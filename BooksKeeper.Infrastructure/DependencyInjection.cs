@@ -4,6 +4,7 @@ using BooksKeeper.Domain.Interfaces;
 using BooksKeeper.Domain.Interfaces.Common;
 using BooksKeeper.Infrastructure.Caching;
 using BooksKeeper.Infrastructure.Data;
+using BooksKeeper.Infrastructure.Data.MongoDbRepositories;
 using BooksKeeper.Infrastructure.Data.Repositories;
 using BooksKeeper.Infrastructure.Data.Repositories.Common;
 using Microsoft.EntityFrameworkCore;
@@ -37,6 +38,7 @@ namespace BooksKeeper.Infrastructure
             services.AddScoped<IBookDapperRepository<BookYearCountResponse>, BookDapperRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<ICacheService, RedisDistributedCacheService>();
+            services.AddScoped<IReviewMongoRepository, ProductReviewRepository>();
 
             // Получение настроек Redis из конфигурации
             var redisConnectionString = configuration["Redis:RedisConnectionString"];
