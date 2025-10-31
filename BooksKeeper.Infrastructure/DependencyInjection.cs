@@ -9,6 +9,7 @@ using BooksKeeper.Infrastructure.Data.Repositories.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MongoDB.Driver;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
@@ -53,6 +54,12 @@ namespace BooksKeeper.Infrastructure
                 var redisConnection = configuration["Redis:RedisConnectionString"];
                 return ConnectionMultiplexer.Connect(redisConnection!);
             });
+
+            // Регистрация клиента MongoDB
+            var mongoConnectionString = configuration["Mongo:MongoConnectionString"];
+            var mongoDatabaseName = configuration["Mongo:DatabaseName"];
+
+            services.AddSingleton<IMongoClient>(new MongoClient(mongoConnectionString));
 
             return services;
         }

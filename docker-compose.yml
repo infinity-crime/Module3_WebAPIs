@@ -23,7 +23,19 @@ services:
       - "6379:6379"
     volumes:
       - redis-data:/data
+  
+  mongodb:
+    image: mongo:7.0
+    container_name: BooksKeeper-MongoDB-Container
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: ProductReviewsDB
+    volumes:
+      - mongo-data:/data/db
 
 volumes:
   BooksKeeper-Db-Data:
-  redis-data:  
+  redis-data:
+  mongo-data:  
