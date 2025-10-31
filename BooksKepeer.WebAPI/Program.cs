@@ -1,9 +1,9 @@
 using BooksKeeper.Application;
 using BooksKeeper.Application.Interfaces;
+using BooksKeeper.Application.POCO.Settings;
 using BooksKeeper.Application.Services;
 using BooksKeeper.Infrastructure;
 using BooksKepeer.WebAPI.Middleware;
-using BooksKepeer.WebAPI.Settings;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using StackExchange.Redis;
@@ -24,6 +24,7 @@ builder.Services.AddControllers();
 
 // Читаем нашу конфигурацию из appsettings.json
 builder.Services.Configure<ApiSettings>(builder.Configuration.GetSection("ApiSettings"));
+builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection("Mongo"));
 
 builder.Services.AddOutputCache(options =>
 {
