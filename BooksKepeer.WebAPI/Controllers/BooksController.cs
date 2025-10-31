@@ -65,6 +65,15 @@ namespace BooksKepeer.WebAPI.Controllers
             return HandleResult<BookResponse>(result);
         }
 
+        /// <summary>
+        /// Получает подробную информацию о книге по её уникальному идентификатору.
+        /// </summary>
+        /// <remarks>Этот метод вызывает базовую службу для получения информации о книге и возвращает результат
+        /// в виде HTTP-ответа.</remarks>
+        /// <param name="id">Уникальный идентификатор книги, для которой требуется получить информацию. Не может быть пустым.</param>
+        /// <param name="cancellationToken">Токен для отслеживания запросов на отмену.</param>
+        /// <returns><see cref="IActionResult"/>, содержащий информацию о книге, если он найден; в противном случае — соответствующий ответ об ошибке
+        ///</returns>
         [HttpGet("{id}/details")]
         public async Task<IActionResult> GetBookDetails([FromRoute] Guid id, CancellationToken cancellationToken)
         {

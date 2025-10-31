@@ -29,7 +29,7 @@ namespace BooksKeeper.Infrastructure.Data.MongoDbRepositories
         {
             await _collection.InsertOneAsync(review, new InsertOneOptions(), cancellationToken);
         }
-      
+
         public async Task DeleteByIdAsync(string id, CancellationToken cancellationToken = default)
         {
             await _collection.DeleteOneAsync(p => p.Id == id, cancellationToken);

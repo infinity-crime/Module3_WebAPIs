@@ -2,6 +2,7 @@
 using BooksKeeper.Application.Interfaces;
 using BooksKeeper.Domain.Interfaces;
 using BooksKeeper.Domain.Interfaces.Common;
+using BooksKeeper.Infrastructure.BackgroundServices;
 using BooksKeeper.Infrastructure.Caching;
 using BooksKeeper.Infrastructure.Data;
 using BooksKeeper.Infrastructure.Data.MongoDbRepositories;
@@ -62,6 +63,8 @@ namespace BooksKeeper.Infrastructure
             var mongoDatabaseName = configuration["Mongo:DatabaseName"];
 
             services.AddSingleton<IMongoClient>(new MongoClient(mongoConnectionString));
+
+            services.AddHostedService<AverageRatingCalculatorService>();
 
             return services;
         }

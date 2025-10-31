@@ -13,6 +13,7 @@ namespace BooksKeeper.Application
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
+            // Регистрация сервисов приложения
             services.AddScoped<IBookService, BookService>();
             services.AddScoped<IAuthorService, AuthorService>();
             services.AddScoped<IProductReviewService, ProductReviewService>();
