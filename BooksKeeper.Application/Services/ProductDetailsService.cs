@@ -13,11 +13,15 @@ namespace BooksKeeper.Application.Services
     {
         private readonly IBookService _bookService;
         private readonly IProductReviewService _productReviewService;
+        private readonly ICacheService _cacheService;
 
-        public ProductDetailsService(IBookService bookService, IProductReviewService productReviewService)
+        public ProductDetailsService(IBookService bookService, 
+            IProductReviewService productReviewService,
+            ICacheService cacheService)
         {
             _bookService = bookService;
             _productReviewService = productReviewService;
+            _cacheService = cacheService;
         }
 
         public async Task<Result<ProductDetailsResponse>> GetBookDetailsAsync(Guid id, CancellationToken cancellationToken)
@@ -30,8 +34,13 @@ namespace BooksKeeper.Application.Services
             if(!reviewsResult.IsSuccess)
                 return Result<ProductDetailsResponse>.Failure(reviewsResult.Error!);
 
+            var avgRating = await _cacheService.GetAsync<string>($"rating:{bookResult.Value.Id}");
+            if(avgRating is null)
+                avgRating = "No ratings yet";
+
             var productDetails = new ProductDetailsResponse(
                 BookResponse: bookResult.Value,
+                avgRating: avgRating,
                 reviews: reviewsResult.Value.ToList()
                 );
 

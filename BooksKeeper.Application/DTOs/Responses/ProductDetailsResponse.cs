@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace BooksKeeper.Application.DTOs.Responses
 {
-    public record ProductDetailsResponse(BookResponse BookResponse, List<ProductReviewResponse> reviews);
+    public record ProductDetailsResponse(BookResponse BookResponse, string avgRating, List<ProductReviewResponse> reviews);
 }

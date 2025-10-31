@@ -1,5 +1,7 @@
-﻿using BooksKeeper.Application.POCO.Settings;
+﻿using BooksKeeper.Application.Interfaces;
+using BooksKeeper.Application.POCO.Settings;
 using BooksKeeper.Domain.Entities;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -20,7 +22,7 @@ namespace BooksKeeper.Infrastructure.BackgroundServices
     {
         private readonly ILogger<AverageRatingCalculatorService> _logger;
         private readonly IMongoClient _mongoClient;
-        private readonly IConnectionMultiplexer _redis;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
 
         private readonly MongoDbSettings _mongoSettings;
 
@@ -29,12 +31,12 @@ namespace BooksKeeper.Infrastructure.BackgroundServices
         public AverageRatingCalculatorService(ILogger<AverageRatingCalculatorService> logger, 
             IOptions<MongoDbSettings> options, 
             IMongoClient mongoClient,
-            IConnectionMultiplexer connectionMultiplexer)
+            IServiceScopeFactory serviceScopeFactory)
         {
             _logger = logger;
             _mongoSettings = options.Value;
             _mongoClient = mongoClient;
-            _redis = connectionMultiplexer;
+            _serviceScopeFactory = serviceScopeFactory;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -45,11 +47,11 @@ namespace BooksKeeper.Infrastructure.BackgroundServices
             {
                 try
                 {
-                    var redis = _redis.GetDatabase();
-
                     var database = _mongoClient.GetDatabase(_mongoSettings.DatabaseName);
                     var collection = database.GetCollection<ProductReview>("reviews");
 
+                    using var scope = _serviceScopeFactory.CreateScope();
+                    var cacheService = scope.ServiceProvider.GetRequiredService<ICacheService>();
                     /*
                         Метод Aggregate() используется для выполнения агрегации на стороне MongoDB. 
                         Использование этого метода не выполняет загрузку всех данных в память приложения. А лишь
@@ -76,7 +78,7 @@ namespace BooksKeeper.Infrastructure.BackgroundServices
 
                         var avgStr = item.Average.ToString("F2", CultureInfo.InvariantCulture);
 
-                        await redis.StringSetAsync(redisKey, avgStr);
+                        await cacheService.SetAsync(redisKey, avgStr, TimeSpan.FromMinutes(5));
 
                         _logger.LogInformation($"Updated {redisKey} = {avgStr} (count = {item.Count})");
                     }
@@ -85,15 +87,24 @@ namespace BooksKeeper.Infrastructure.BackgroundServices
                 }
                 catch(OperationCanceledException) when (stoppingToken.IsCancellationRequested)
                 {
-                    _logger.LogInformation("AverageRatingCalculatorService stoped");
-
                     break;
                 }
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, "Error while calculating/storing average ratings. Will retry after delay.");
                 }
+
+                try
+                {
+                    await Task.Delay(_period, stoppingToken);
+                }
+                catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+                {
+                    break;
+                }
             }
+
+            _logger.LogInformation("AverageRatingCalculatorService stoped");
         }
     }
 
