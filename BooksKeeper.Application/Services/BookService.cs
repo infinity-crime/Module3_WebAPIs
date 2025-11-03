@@ -13,7 +13,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BooksKeeper.Infrastructure.Data;
 using System.Runtime.CompilerServices;
 using BooksKeeper.Domain.Interfaces.Common;
 
@@ -23,18 +22,21 @@ namespace BooksKeeper.Application.Services
     {
         private readonly IBookRepository _bookRepository;
         private readonly IAuthorRepository _authorRepository;
+        private readonly IBookDapperRepository<BookYearCountResponse> _bookDapperRepository;
 
         private readonly IUnitOfWork _unitOfWork;
 
-        private readonly ApplicationDbContext _context;
+        private readonly ICacheService _cacheService;
 
         public BookService(IBookRepository bookRepository, IAuthorRepository authorRepository, 
-            ApplicationDbContext context, IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork, IBookDapperRepository<BookYearCountResponse> bookDapperRepository, 
+            ICacheService cacheService)
         {
             _bookRepository = bookRepository;
             _authorRepository = authorRepository;
             _unitOfWork = unitOfWork;
-            _context = context;
+            _bookDapperRepository = bookDapperRepository;
+            _cacheService = cacheService;
         }
 
         public async Task<Result<BookResponse>> CreateAsync(CreateBookRequest request)
@@ -126,6 +128,9 @@ namespace BooksKeeper.Application.Services
 
                 await _unitOfWork.SaveChangesAsync();
 
+                // сброс тухлого кэша
+                await _cacheService.RemoveAsync($"book:{id}");
+
                 return Result.Success();
             }
             catch (Exception ex)
@@ -144,17 +149,28 @@ namespace BooksKeeper.Application.Services
 
         public async Task<Result<BookResponse>> GetByIdAsync(Guid id)
         {
+            var cachedBook = await _cacheService.GetAsync<BookResponse>($"book:{id}");
+            if(cachedBook is not null)
+            {
+                Console.WriteLine("Книга получена из Redis");
+                return Result<BookResponse>.Success(cachedBook);
+            }
+
             var book = await _bookRepository.GetByIdAsync(id, true, false);
             if(book is null)
                 return Result<BookResponse>.Failure(Error.NotFound("BOOK_NOT_FOUND", 
                     $"Book with ID '{id}' was not found."));
 
+            await _cacheService.SetAsync($"book:{id}", MapToBookResponse(book), TimeSpan.FromMinutes(10));
+
+            Console.WriteLine("Книга получена из базы данных");
+
             return Result<BookResponse>.Success(MapToBookResponse(book));
         }
 
-        public async Task<IEnumerable<BookYearCountDto>> GetCountBooksByYearAsync()
+        public async Task<IEnumerable<BookYearCountResponse>> GetCountBooksByYearAsync()
         {
-            return await _bookRepository.GetBooksCountByYearAsync();
+            return await _bookDapperRepository.GetBooksByYearCountAsync();
         }
 
         public async Task<Result> UpdateAsync(Guid id, UpdateBookRequest request)
@@ -179,6 +195,9 @@ namespace BooksKeeper.Application.Services
                 _bookRepository.UpdateAsync(book);
 
                 await _unitOfWork.SaveChangesAsync();
+
+                // сброс тухлого кэша
+                await _cacheService.RemoveAsync($"book:{id}");
 
                 return Result.Success();
             }

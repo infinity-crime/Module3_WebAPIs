@@ -3,11 +3,12 @@ using BooksKeeper.Application.DTOs.Requests;
 using BooksKeeper.Application.DTOs.Requests.BookRequests;
 using BooksKeeper.Application.DTOs.Responses;
 using BooksKeeper.Application.Interfaces;
+using BooksKeeper.Application.POCO.Settings;
 using BooksKepeer.WebAPI.Common;
-using BooksKepeer.WebAPI.Settings;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.AspNetCore.OutputCaching;
 using Microsoft.Extensions.Options;
 
 namespace BooksKepeer.WebAPI.Controllers
@@ -20,12 +21,14 @@ namespace BooksKepeer.WebAPI.Controllers
     public class BooksController : BaseController
     {
         private readonly IBookService _bookService;
+        private readonly IProductDetailsService _productDetailsService;
         private readonly ApiSettings _apiSettings;
 
-        public BooksController(IBookService bookService, IOptions<ApiSettings> apiOptions)
+        public BooksController(IBookService bookService, IOptions<ApiSettings> apiOptions, IProductDetailsService productDetailsService)
         {
             _bookService = bookService;
             _apiSettings = apiOptions.Value;
+            _productDetailsService = productDetailsService;
         }
 
         /// <summary>
@@ -43,6 +46,7 @@ namespace BooksKepeer.WebAPI.Controllers
         /// </summary>
         /// <returns>Список книг</returns>
         [HttpGet("all-books")]
+        [OutputCache(PolicyName = "BookPolicy")]
         public async Task<IActionResult> GetAllBooks()
         {
             return Ok(await _bookService.GetAllAsync());
@@ -61,6 +65,27 @@ namespace BooksKepeer.WebAPI.Controllers
             return HandleResult<BookResponse>(result);
         }
 
+        /// <summary>
+        /// Получает подробную информацию о книге по её уникальному идентификатору.
+        /// </summary>
+        /// <remarks>Этот метод вызывает базовую службу для получения информации о книге и возвращает результат
+        /// в виде HTTP-ответа.</remarks>
+        /// <param name="id">Уникальный идентификатор книги, для которой требуется получить информацию. Не может быть пустым.</param>
+        /// <param name="cancellationToken">Токен для отслеживания запросов на отмену.</param>
+        /// <returns><see cref="IActionResult"/>, содержащий информацию о книге, если он найден; в противном случае — соответствующий ответ об ошибке
+        ///</returns>
+        [HttpGet("{id}/details")]
+        public async Task<IActionResult> GetBookDetails([FromRoute] Guid id, CancellationToken cancellationToken)
+        {
+            var result = await _productDetailsService.GetBookDetailsAsync(id, cancellationToken);
+
+            return HandleResult<ProductDetailsResponse>(result);
+        }
+
+        /// <summary>
+        /// Метод, использующий Dapper для получения количества книг по годам.
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("count-books-by-year")]
         public async Task<IActionResult> GetCountBooksByYear()
         {

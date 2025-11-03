@@ -8,11 +8,11 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.10" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.10" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\BooksKeeper.Domain\BooksKeeper.Domain.csproj" />
-	<ProjectReference Include="..\BooksKeeper.Infrastructure\BooksKeeper.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
