@@ -13,11 +13,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
 using StackExchange.Redis;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BooksKeeper.Domain.Entities.Identity;
 
 namespace BooksKeeper.Infrastructure
 {
@@ -40,6 +42,11 @@ namespace BooksKeeper.Infrastructure
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<ICacheService, RedisDistributedCacheService>();
             services.AddScoped<IReviewMongoRepository, ProductReviewRepository>();
+
+            // Регистрация Identity
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
 
             // Получение настроек Redis из конфигурации
             var redisConnectionString = configuration["Redis:RedisConnectionString"];

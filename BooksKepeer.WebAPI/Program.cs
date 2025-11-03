@@ -79,6 +79,7 @@ app.UseMiddleware<RequestTimingMiddleware>();
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication(); // Добавляем аутентификацию
 app.UseAuthorization();
 
 // Включаем кэширование HTTP ответов
