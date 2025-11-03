@@ -24,5 +24,13 @@ namespace BooksKepeer.WebAPI.Controllers.IdentityControllers
 
             return HandleResult<IdentityResult>(result);
         }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> LoginUser([FromBody] LoginUserRequest loginRequest)
+        {
+            var result = await _applicationUserService.LoginAsync(loginRequest);
+
+            return HandleResult(result);
+        }
     }
 }
