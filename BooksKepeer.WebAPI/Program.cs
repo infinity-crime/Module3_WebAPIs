@@ -4,6 +4,7 @@ using BooksKeeper.Application.POCO.Settings;
 using BooksKeeper.Application.Services;
 using BooksKeeper.Infrastructure;
 using BooksKepeer.WebAPI.Middleware;
+using BooksKepeer.WebAPI.SeedMethods;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.OpenApi.Models;
@@ -120,5 +121,22 @@ app.MapControllers();
 
 // Эндпоинт для проверки здоровья сервиса
 app.MapHealthChecks("/healthz");
+
+// Сеeding начальных ролей в БД
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    try
+    {
+        await IdentitySeed.SeedRolesAsync(services);
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+
+        logger.LogError(ex, "Error seeding roles");
+    }
+}
 
 app.Run();

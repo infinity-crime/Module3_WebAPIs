@@ -27,6 +27,7 @@ namespace BooksKeeper.Application
             // Регистрация сервисов идентификации
             services.AddScoped<IApplicationUserService, ApplicationUserService>();
             services.AddScoped<IJwtService, JwtService>();
+            services.AddScoped<IRoleService, RoleService>();
 
             services.AddAuthentication(options =>
             {

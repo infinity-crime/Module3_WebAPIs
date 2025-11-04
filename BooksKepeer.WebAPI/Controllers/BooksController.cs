@@ -141,6 +141,7 @@ namespace BooksKepeer.WebAPI.Controllers
         /// <param name="id">ID книги типа Guid</param>
         /// <returns>Status code</returns>
         [HttpDelete("delete/{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteBook([FromRoute] Guid id)
         {
             var result = await _bookService.DeleteByIdAsync(id);

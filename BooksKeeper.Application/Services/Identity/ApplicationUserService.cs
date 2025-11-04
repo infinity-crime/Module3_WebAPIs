@@ -41,6 +41,7 @@ namespace BooksKeeper.Application.Services.Identity
                 return Result<IdentityResult>.Failure(Error.Validation("USER_REGISTRATION_FAILED", errorMessage));
             }
                 
+            await _userManager.AddToRoleAsync(newUser, "User"); // по умолчанию назначаем роль "User"
 
             return Result<IdentityResult>.Success(result);
         }
@@ -57,7 +58,7 @@ namespace BooksKeeper.Application.Services.Identity
             if(!signInResult.Succeeded)
                 return Result<string>.Failure(Error.AccessUnAuthorized("INVALID_CREDENTIALS", "The provided credentials are invalid"));
 
-            var token = _jwtService.GenerateToken(user);
+            var token = await _jwtService.GenerateToken(user);
 
             return Result<string>.Success(token);
         }
