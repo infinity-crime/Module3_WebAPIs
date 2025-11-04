@@ -5,6 +5,8 @@ using BooksKeeper.Application.DTOs.Responses;
 using BooksKeeper.Application.Interfaces;
 using BooksKeeper.Application.POCO.Settings;
 using BooksKepeer.WebAPI.Common;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
@@ -17,7 +19,7 @@ namespace BooksKepeer.WebAPI.Controllers
     /// API для управления списком книг
     /// </summary>
     [Route("api/[controller]")]
-    [ApiController]
+    [Authorize]
     public class BooksController : BaseController
     {
         private readonly IBookService _bookService;
@@ -111,7 +113,7 @@ namespace BooksKepeer.WebAPI.Controllers
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        [HttpPost("/create-book-and-author")]
+        [HttpPost("create-book-and-author")]
         public async Task<IActionResult> CreateBookWithAuthor([FromBody] CreateBookWithAuthorRequest request)
         {
             var result = await _bookService.CreateWithAuthorAsync(request);

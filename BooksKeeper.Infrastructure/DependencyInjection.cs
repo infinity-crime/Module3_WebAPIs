@@ -71,6 +71,7 @@ namespace BooksKeeper.Infrastructure
 
             services.AddSingleton<IMongoClient>(new MongoClient(mongoConnectionString));
 
+            // регистрация фонового сервиса расчета среднего отзыва книги
             services.AddHostedService<AverageRatingCalculatorService>();
 
             return services;
