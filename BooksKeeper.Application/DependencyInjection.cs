@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BooksKeeper.Application.Authorization.Handlers;
+using BooksKeeper.Application.Authorization.Requirements;
 using BooksKeeper.Application.Interfaces;
 using BooksKeeper.Application.Interfaces.Identity;
 using BooksKeeper.Application.Services;
 using BooksKeeper.Application.Services.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -50,7 +53,14 @@ namespace BooksKeeper.Application
                     };
                 });
 
-            services.AddAuthorization();
+            // Регистрация политик авторизации
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("OlderThan18", policy => policy.Requirements.Add(new AgeRequirement(18)));
+            });
+
+            // Регистрация обработчиков требований авторизации
+            services.AddSingleton<IAuthorizationHandler, AgeHandler>();
 
             return services;
         }

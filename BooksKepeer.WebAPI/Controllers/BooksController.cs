@@ -38,6 +38,7 @@ namespace BooksKepeer.WebAPI.Controllers
         /// </summary>
         /// <returns>Объект, хранящий настройки</returns>
         [HttpGet("api-info")]
+        [Authorize(Policy = "OlderThan18")]
         public IActionResult GetApiInfo()
         {
             return Ok(_apiSettings);
