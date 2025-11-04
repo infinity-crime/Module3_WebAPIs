@@ -15,11 +15,13 @@ namespace BooksKeeper.Application.Services.Identity
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IJwtService _jwtService;
 
-        public ApplicationUserService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+        public ApplicationUserService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IJwtService jwtService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _jwtService = jwtService;
         }
 
         public async Task<Result<IdentityResult>> RegisterAsync(RegisterUserRequest request)
@@ -43,19 +45,21 @@ namespace BooksKeeper.Application.Services.Identity
             return Result<IdentityResult>.Success(result);
         }
 
-        public async Task<Result> LoginAsync(LoginUserRequest request)
+        public async Task<Result<string>> LoginAsync(LoginUserRequest request)
         {
             var user = await _userManager.FindByEmailAsync(request.Email)
                 ?? await _userManager.FindByNameAsync(request.Email);
 
             if(user is null)
-                return Result.Failure(Error.NotFound("USER_NOT_FOUND", "User with the provided email/name does not exist"));
+                return Result<string>.Failure(Error.NotFound("USER_NOT_FOUND", "User with the provided email/name does not exist"));
 
             var signInResult = await _signInManager.CheckPasswordSignInAsync(user, request.Password, lockoutOnFailure: true);
             if(!signInResult.Succeeded)
-                return Result.Failure(Error.AccessUnAuthorized("INVALID_CREDENTIALS", "The provided credentials are invalid"));
+                return Result<string>.Failure(Error.AccessUnAuthorized("INVALID_CREDENTIALS", "The provided credentials are invalid"));
 
-            return Result.Success();
+            var token = _jwtService.GenerateToken(user);
+
+            return Result<string>.Success(token);
         }
     }
 }

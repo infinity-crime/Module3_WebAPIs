@@ -30,7 +30,7 @@ namespace BooksKepeer.WebAPI.Controllers.IdentityControllers
         {
             var result = await _applicationUserService.LoginAsync(loginRequest);
 
-            return HandleResult(result);
+            return HandleResult<string>(result);
         }
     }
 }

@@ -13,7 +13,7 @@ using System.Reflection;
 var builder = WebApplication.CreateBuilder(args);
 
 // Регистрация сервисов приложения и инфраструктуры с помощью extension методов
-builder.Services.AddApplicationServices();
+builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddInfrastructureServices(builder.Configuration);
 
 // Регистрация FluentValidation
@@ -25,6 +25,7 @@ builder.Services.AddControllers();
 // Читаем нашу конфигурацию из appsettings.json
 builder.Services.Configure<ApiSettings>(builder.Configuration.GetSection("ApiSettings"));
 builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection("Mongo"));
+builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("JwtOptions"));
 
 builder.Services.AddOutputCache(options =>
 {

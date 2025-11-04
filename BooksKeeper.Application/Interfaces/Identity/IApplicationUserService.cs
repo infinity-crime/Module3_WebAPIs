@@ -13,6 +13,6 @@ namespace BooksKeeper.Application.Interfaces.Identity
     {
         Task<Result<IdentityResult>> RegisterAsync(RegisterUserRequest request);
 
-        Task<Result> LoginAsync(LoginUserRequest request);
+        Task<Result<string>> LoginAsync(LoginUserRequest request);
     }
 }

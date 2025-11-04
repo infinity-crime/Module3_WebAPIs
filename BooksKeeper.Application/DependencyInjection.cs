@@ -7,13 +7,16 @@ using BooksKeeper.Application.Interfaces;
 using BooksKeeper.Application.Interfaces.Identity;
 using BooksKeeper.Application.Services;
 using BooksKeeper.Application.Services.Identity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 
 namespace BooksKeeper.Application
 {
     public static class DependencyInjection
     {
-        public static IServiceCollection AddApplicationServices(this IServiceCollection services)
+        public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
         {
             // Регистрация сервисов приложения
             services.AddScoped<IBookService, BookService>();
@@ -23,6 +26,23 @@ namespace BooksKeeper.Application
 
             // Регистрация сервисов идентификации
             services.AddScoped<IApplicationUserService, ApplicationUserService>();
+            services.AddScoped<IJwtService, JwtService>();
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        
+                        ValidIssuer = configuration["JwtOptions:Issuer"],
+                        ValidAudience = configuration["JwtOptions:Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtOptions:Secret"]!))
+                    };
+                });
 
             return services;
         }
