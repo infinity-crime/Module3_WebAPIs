@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.OutputCaching;
 using Microsoft.Extensions.Options;
+using System.Security.Claims;
 
 namespace BooksKepeer.WebAPI.Controllers
 {
@@ -42,6 +43,25 @@ namespace BooksKepeer.WebAPI.Controllers
         public IActionResult GetApiInfo()
         {
             return Ok(_apiSettings);
+        }
+
+        /// <summary>
+        /// Получение информации о текущем пользователе через токен JWT
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("my-info")]
+        public IActionResult GetUserInfo()
+        {
+            var info = new
+            {
+                Id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value,
+                UserName = User.Identity?.Name,
+                Email = User.FindFirst(ClaimTypes.Email)?.Value,
+                DateOfBirth = User.FindFirst(ClaimTypes.DateOfBirth)?.Value,
+                Roles = User.FindAll(ClaimTypes.Role).Select(c => c.Value).ToList()
+            };
+
+            return Ok(info);
         }
 
         /// <summary>
