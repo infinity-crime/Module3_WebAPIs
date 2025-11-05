@@ -5,11 +5,14 @@ using BooksKeeper.Application.DTOs.Responses;
 using BooksKeeper.Application.Interfaces;
 using BooksKeeper.Application.POCO.Settings;
 using BooksKepeer.WebAPI.Common;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.OutputCaching;
 using Microsoft.Extensions.Options;
+using System.Security.Claims;
 
 namespace BooksKepeer.WebAPI.Controllers
 {
@@ -17,7 +20,7 @@ namespace BooksKepeer.WebAPI.Controllers
     /// API для управления списком книг
     /// </summary>
     [Route("api/[controller]")]
-    [ApiController]
+    [Authorize]
     public class BooksController : BaseController
     {
         private readonly IBookService _bookService;
@@ -36,9 +39,29 @@ namespace BooksKepeer.WebAPI.Controllers
         /// </summary>
         /// <returns>Объект, хранящий настройки</returns>
         [HttpGet("api-info")]
+        [Authorize(Policy = "OlderThan18")]
         public IActionResult GetApiInfo()
         {
             return Ok(_apiSettings);
+        }
+
+        /// <summary>
+        /// Получение информации о текущем пользователе через токен JWT
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("my-info")]
+        public IActionResult GetUserInfo()
+        {
+            var info = new
+            {
+                Id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value,
+                UserName = User.Identity?.Name,
+                Email = User.FindFirst(ClaimTypes.Email)?.Value,
+                DateOfBirth = User.FindFirst(ClaimTypes.DateOfBirth)?.Value,
+                Roles = User.FindAll(ClaimTypes.Role).Select(c => c.Value).ToList()
+            };
+
+            return Ok(info);
         }
 
         /// <summary>
@@ -111,7 +134,7 @@ namespace BooksKepeer.WebAPI.Controllers
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        [HttpPost("/create-book-and-author")]
+        [HttpPost("create-book-and-author")]
         public async Task<IActionResult> CreateBookWithAuthor([FromBody] CreateBookWithAuthorRequest request)
         {
             var result = await _bookService.CreateWithAuthorAsync(request);
@@ -139,6 +162,7 @@ namespace BooksKepeer.WebAPI.Controllers
         /// <param name="id">ID книги типа Guid</param>
         /// <returns>Status code</returns>
         [HttpDelete("delete/{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteBook([FromRoute] Guid id)
         {
             var result = await _bookService.DeleteByIdAsync(id);
