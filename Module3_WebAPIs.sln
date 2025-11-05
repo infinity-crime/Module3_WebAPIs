@@ -26,6 +26,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibCalculator", "tests\LibC
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibCalculator.Tests", "tests\LibCalculator.Tests\LibCalculator.Tests.csproj", "{50B428E4-AA6E-4808-985F-36F5F76DD18E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleApiWithDI.IntegrationTests", "tests\SimpleApiWithDI.IntegrationTests\SimpleApiWithDI.IntegrationTests.csproj", "{46DE06D1-26E4-4E96-849D-9BBBA4F8DAA3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -68,6 +70,10 @@ Global
 		{50B428E4-AA6E-4808-985F-36F5F76DD18E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{50B428E4-AA6E-4808-985F-36F5F76DD18E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{50B428E4-AA6E-4808-985F-36F5F76DD18E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{46DE06D1-26E4-4E96-849D-9BBBA4F8DAA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46DE06D1-26E4-4E96-849D-9BBBA4F8DAA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46DE06D1-26E4-4E96-849D-9BBBA4F8DAA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46DE06D1-26E4-4E96-849D-9BBBA4F8DAA3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -76,6 +82,7 @@ Global
 		{CD069144-7896-4FE9-8160-E2DA54E85337} = {36D591C7-65C7-A0D1-1CBC-10CDE441BDC8}
 		{663D75C5-EC29-4DB5-8D34-DD907A3A2C8B} = {36D591C7-65C7-A0D1-1CBC-10CDE441BDC8}
 		{50B428E4-AA6E-4808-985F-36F5F76DD18E} = {36D591C7-65C7-A0D1-1CBC-10CDE441BDC8}
+		{46DE06D1-26E4-4E96-849D-9BBBA4F8DAA3} = {36D591C7-65C7-A0D1-1CBC-10CDE441BDC8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0B3F5340-EB69-4DBE-929F-AD38B0BC1B8C}
