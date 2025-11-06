@@ -29,7 +29,7 @@ namespace BooksKeeper.Infrastructure.Data.Repositories.Common
             _dbContext.Update(entity);
         }
 
-        public void DeleteAsync(T entity)
+        public void Delete(T entity)
         {
             _dbContext.Set<T>().Remove(entity);
         }

@@ -62,7 +62,7 @@ namespace BooksKeeper.Application.Services
             try
             {
                 author.DeleteAllBooks();
-                _authorRepository.DeleteAsync(author);
+                _authorRepository.Delete(author);
 
                 await _unitOfWork.SaveChangesAsync();
 
