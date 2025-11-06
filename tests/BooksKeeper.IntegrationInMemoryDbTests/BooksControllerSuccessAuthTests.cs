@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -8,20 +7,20 @@ using System.Threading.Tasks;
 
 namespace BooksKeeper.IntegrationInMemoryDbTests
 {
-    public class BooksControllerAuthorizeTests
+    public class BooksControllerSuccessAuthTests
     {
         [Fact]
-        public async Task GetUserInfo_WithoutToken_ReturnsUnauthorizedAsync()
+        public async Task GetAllBooks_WithToken_ReturnsOk()
         {
             // Arrange
             var factory = new MyTestFactory();
             var client = factory.CreateClient();
 
             // Act
-            var respone = await client.GetAsync("api/books/my-info");
+            var response = await client.GetAsync("/api/books/all-books");
 
             // Assert
-            Assert.Equal(HttpStatusCode.Unauthorized, respone.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
     }
 }
