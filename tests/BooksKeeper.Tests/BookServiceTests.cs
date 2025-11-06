@@ -62,7 +62,7 @@ namespace BooksKeeper.Tests
                 .Setup(r => r.GetByIdAsync(expectedBook.Id, true, true))
                 .ReturnsAsync(expectedBook);
 
-            // Настройка мока для метода DeleteAsync не требуется, так как он ничего не возвращает (но в названии есть Async, оно неверное, т.е. метод синхронный)
+            // Настройка мока для метода Delete не требуется, так как он ничего не возвращает
 
             unitOfWorkMock
                 .Setup(u => u.SaveChangesAsync())
@@ -80,8 +80,8 @@ namespace BooksKeeper.Tests
             // Assert
             Assert.True(result.IsSuccess);
 
-            // Verify вызов метода DeleteAsync с правильным объектом Book и SaveChangesAsync
-            bookRepositoryMock.Verify(r => r.DeleteAsync(It.Is<Book>(b => b.Id == expectedBook.Id)), Times.Once);
+            // Verify вызов метода Delete с правильным объектом Book и SaveChangesAsync
+            bookRepositoryMock.Verify(r => r.Delete(It.Is<Book>(b => b.Id == expectedBook.Id)), Times.Once);
             unitOfWorkMock.Verify(u => u.SaveChangesAsync(), Times.Once);
         }
     }

@@ -124,7 +124,7 @@ namespace BooksKeeper.Application.Services
             try
             {
                 book.DeleteAuthors();
-                _bookRepository.DeleteAsync(book);
+                _bookRepository.Delete(book);
 
                 await _unitOfWork.SaveChangesAsync();
 

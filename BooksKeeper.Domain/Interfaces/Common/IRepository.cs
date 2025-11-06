@@ -30,7 +30,7 @@ namespace BooksKeeper.Domain.Interfaces.Common
         /// Удаление сущности
         /// </summary>
         /// <param name="entity"></param>
-        void DeleteAsync(T entity);
+        void Delete(T entity);
 
         /// <summary>
         /// Проверка наличия сущности
