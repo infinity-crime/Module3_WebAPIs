@@ -1,7 +1,9 @@
 ﻿using BooksKeeper.Domain.Entities;
 using BooksKeeper.Infrastructure.Data;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -39,7 +41,15 @@ namespace BooksKeeper.IntegrationInMemoryDbTests
 
                 // Сеим тестовые данные
                 SeedTestData(db);
-            });
+
+                // Добавляем тестовую аутентификацию
+                services.AddAuthentication(options =>
+                {
+                    options.DefaultAuthenticateScheme = "Test";
+                    options.DefaultChallengeScheme = "Test";
+                })
+                .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("Test", options => { });
+            }); 
         }
 
         private static void RemoveAllDbContextRegistrations(IServiceCollection services)
