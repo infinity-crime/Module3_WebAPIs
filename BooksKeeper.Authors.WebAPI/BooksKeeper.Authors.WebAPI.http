@@ -1,0 +1,6 @@
+@BooksKeeper.Authors.WebAPI_HostAddress = http://localhost:5079
+
+GET {{BooksKeeper.Authors.WebAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

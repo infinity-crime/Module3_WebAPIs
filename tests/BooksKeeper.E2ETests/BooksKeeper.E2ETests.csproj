@@ -22,7 +22,7 @@
     <ProjectReference Include="..\..\BooksKeeper.Application\BooksKeeper.Application.csproj" />
     <ProjectReference Include="..\..\BooksKeeper.Domain\BooksKeeper.Domain.csproj" />
     <ProjectReference Include="..\..\BooksKeeper.Infrastructure\BooksKeeper.Infrastructure.csproj" />
-    <ProjectReference Include="..\..\BooksKepeer.WebAPI\BooksKepeer.WebAPI.csproj" />
+    <ProjectReference Include="..\..\BooksKepeer.WebAPI\BooksKepeer.Books.WebAPI.csproj" />
   </ItemGroup>
 
   <ItemGroup>

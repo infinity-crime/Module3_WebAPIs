@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BooksKeeper.Domain", "Books
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BooksKeeper.Application", "BooksKeeper.Application\BooksKeeper.Application.csproj", "{4E529EA0-8ABD-4A56-9F47-0F694D1076A7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BooksKepeer.WebAPI", "BooksKepeer.WebAPI\BooksKepeer.WebAPI.csproj", "{5AEFF6FE-AC52-4E53-8EE6-CEB7542CA448}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BooksKepeer.Books.WebAPI", "BooksKepeer.WebAPI\BooksKepeer.Books.WebAPI.csproj", "{5AEFF6FE-AC52-4E53-8EE6-CEB7542CA448}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BooksKeeper.Infrastructure", "BooksKeeper.Infrastructure\BooksKeeper.Infrastructure.csproj", "{627CF665-3E6F-4AE7-B638-CE6B5E9B28DE}"
 EndProject
@@ -36,6 +36,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Элементы решен
 	ProjectSection(SolutionItems) = preProject
 		HttpClientVsHttpClientFactory.md = HttpClientVsHttpClientFactory.md
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BooksKeeper.Authors.WebAPI", "BooksKeeper.Authors.WebAPI\BooksKeeper.Authors.WebAPI.csproj", "{EB04AF5F-E70B-4C27-9F74-EDDC1EDE0C6D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -91,6 +93,10 @@ Global
 		{00C8EC2C-981B-4143-A370-0A3C27328C72}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{00C8EC2C-981B-4143-A370-0A3C27328C72}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{00C8EC2C-981B-4143-A370-0A3C27328C72}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB04AF5F-E70B-4C27-9F74-EDDC1EDE0C6D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB04AF5F-E70B-4C27-9F74-EDDC1EDE0C6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB04AF5F-E70B-4C27-9F74-EDDC1EDE0C6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB04AF5F-E70B-4C27-9F74-EDDC1EDE0C6D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
