@@ -15,6 +15,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.CompilerServices;
 using BooksKeeper.Domain.Interfaces.Common;
+using Microsoft.AspNetCore.Mvc.Formatters;
+using BooksKeeper.Application.DTOs.Requests.AuthorRequests;
 
 namespace BooksKeeper.Application.Services
 {
@@ -22,18 +24,20 @@ namespace BooksKeeper.Application.Services
     {
         private readonly IBookRepository _bookRepository;
         private readonly IAuthorRepository _authorRepository;
+        private readonly IHttpAuthorService _httpAuthorService;
         private readonly IBookDapperRepository<BookYearCountResponse> _bookDapperRepository;
 
         private readonly IUnitOfWork _unitOfWork;
 
         private readonly ICacheService _cacheService;
 
-        public BookService(IBookRepository bookRepository, IAuthorRepository authorRepository, 
+        public BookService(IBookRepository bookRepository, IAuthorRepository authorRepository, IHttpAuthorService httpAuthorService, 
             IUnitOfWork unitOfWork, IBookDapperRepository<BookYearCountResponse> bookDapperRepository, 
             ICacheService cacheService)
         {
             _bookRepository = bookRepository;
             _authorRepository = authorRepository;
+            _httpAuthorService = httpAuthorService;
             _unitOfWork = unitOfWork;
             _bookDapperRepository = bookDapperRepository;
             _cacheService = cacheService;
@@ -86,7 +90,7 @@ namespace BooksKeeper.Application.Services
                 newBook.AddAuthor(newAuthor);
 
                 await _bookRepository.AddAsync(newBook);
-                await _authorRepository.AddAsync(newAuthor);
+                await _httpAuthorService.CreateAsync(new CreateAuthorRequest(newAuthor.FirstName, newAuthor.LastName));
 
                 await _unitOfWork.CommitTransactionAsync();
 
@@ -145,6 +149,15 @@ namespace BooksKeeper.Application.Services
             var books = await _bookRepository.GetAllAsync(true);
 
             return books.Select(b => MapToBookResponse(b));
+        }
+
+        public async Task<Result<AuthorResponse>> GetAuthorByIdFromAuthorsWebApi(Guid id)
+        {
+            var author = await _httpAuthorService.GetByIdAsync(id);
+            if (author is null)
+                return Result<AuthorResponse>.Failure(Error.NotFound("AUTHOR_NOT_FOUND", $"Author with id - {id} not found"));
+
+            return Result<AuthorResponse>.Success(author);
         }
 
         public async Task<Result<BookResponse>> GetByIdAsync(Guid id)

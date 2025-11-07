@@ -3,6 +3,7 @@ using BooksKeeper.Application.DTOs;
 using BooksKeeper.Application.DTOs.Requests.AuthorRequests;
 using BooksKeeper.Application.DTOs.Responses;
 using BooksKeeper.Application.Interfaces.Common;
+using BooksKeeper.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,5 +17,7 @@ namespace BooksKeeper.Application.Interfaces
         Task<Result<AuthorDto>> CreateAsync(CreateAuthorRequest request);
 
         Task<Result> UpdateAsync(Guid id, UpdateAuthorRequest request);
+
+        Task<Result<IEnumerable<AuthorDto>>> GetByIdRangeAsync(List<Guid> ids);
     }
 }

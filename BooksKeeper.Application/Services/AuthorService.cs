@@ -105,6 +105,15 @@ namespace BooksKeeper.Application.Services
             return Result<AuthorResponse>.Success(MapToAuthorResponse(author));
         }
 
+        public async Task<Result<IEnumerable<AuthorDto>>> GetByIdRangeAsync(List<Guid> ids)
+        {
+            var authors = await _authorRepository.GetByIdRangeAsync(ids);
+            if (!authors.Any())
+                return Result<IEnumerable<AuthorDto>>.Failure(Error.NotFound("AUTHORS_NOT_FOUND", "Range of authors not found."));
+
+            return Result<IEnumerable<AuthorDto>>.Success(authors.Select(a => MapToDto(a)));
+        }
+
         public async Task<Result> UpdateAsync(Guid id, UpdateAuthorRequest request)
         {
             var author = await _authorRepository.GetByIdAsync(id, false, true);

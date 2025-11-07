@@ -23,8 +23,8 @@ namespace BooksKeeper.Application
         {
             // Регистрация сервисов приложения
             services.AddScoped<IBookService, BookService>();
-            services.AddScoped<IAuthorService, AuthorService>();
             services.AddScoped<IProductReviewService, ProductReviewService>();
+            services.AddScoped<IAuthorService, AuthorService>();
             services.AddScoped<IProductDetailsService, ProductDetailsService>();
 
             // Регистрация сервисов идентификации
@@ -61,6 +61,11 @@ namespace BooksKeeper.Application
 
             // Регистрация обработчиков требований авторизации
             services.AddSingleton<IAuthorizationHandler, AgeHandler>();
+
+            services.AddHttpClient<IHttpAuthorService, HttpAuthorService>(client =>
+            {
+                client.BaseAddress = new Uri("https://localhost:7120");
+            });
 
             return services;
         }

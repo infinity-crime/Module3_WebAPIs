@@ -106,6 +106,19 @@ namespace BooksKepeer.WebAPI.Controllers
         }
 
         /// <summary>
+        /// Получение автора с другого микросервиса
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("find-author/{id}")]
+        public async Task<IActionResult> FindAuthorFromAnotherWebAPI([FromRoute] Guid id)
+        {
+            var result = await _bookService.GetAuthorByIdFromAuthorsWebApi(id);
+
+            return HandleResult<AuthorResponse>(result);
+        }
+
+        /// <summary>
         /// Метод, использующий Dapper для получения количества книг по годам.
         /// </summary>
         /// <returns></returns>

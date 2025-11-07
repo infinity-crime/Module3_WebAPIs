@@ -3,6 +3,7 @@ using BooksKeeper.Application.DTOs.Requests.AuthorRequests;
 using BooksKeeper.Application.DTOs.Responses;
 using BooksKeeper.Application.Interfaces;
 using BooksKeeper.Authors.WebAPI.Controllers.Common;
+using BooksKeeper.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -39,6 +40,17 @@ namespace BooksKeeper.Authors.WebAPI.Controllers
             var author = await _service.GetByIdAsync(id);
 
             return HandleResult<AuthorResponse>(author);
+        }
+
+        [HttpGet("range")]
+        public async Task<IActionResult> GetRangeAuthorsByIds([FromQuery(Name = "ids")] List<Guid> ids)
+        {
+            if(ids == null || ids.Count == 0)
+                return BadRequest("Query parameter 'ids' is required and must contain at least one id.");
+
+            var result = await _service.GetByIdRangeAsync(ids);
+
+            return HandleResult<IEnumerable<AuthorDto>>(result);
         }
 
         /// <summary>
