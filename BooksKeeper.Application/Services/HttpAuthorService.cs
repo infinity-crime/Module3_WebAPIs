@@ -66,25 +66,10 @@ namespace BooksKeeper.Application.Services
 
         public async Task<AuthorResponse?> GetByIdAsync(Guid id)
         {
-            try
-            {
-                using var res = await _httpClient.GetAsync($"/api/authors/{id}");
-                res.EnsureSuccessStatusCode();
-                var successResult = await res.Content.ReadFromJsonAsync<SuccessResultDto<AuthorResponse>>(_jsonSerializerOptions);
-                return successResult?.Value;
-            }
-            catch (BrokenCircuitException ex)
-            {
-                _logger.LogInformation(ex, "Authors circuit is open; returning unavailable.");
-
-                throw new HttpRequestException("Authors service unavailable, circuit open.", ex);
-            }
-            catch(HttpRequestException ex)
-            {
-                _logger.LogError(ex, "HTTP failure when calling Authors service.");
-
-                throw;
-            }
+            using var res = await _httpClient.GetAsync($"/api/authors/{id}");
+            res.EnsureSuccessStatusCode();
+            var successResult = await res.Content.ReadFromJsonAsync<SuccessResultDto<AuthorResponse>>(_jsonSerializerOptions);
+            return successResult?.Value;
         }
 
         public async Task<IEnumerable<AuthorDto>> GetByIdRangeAsync(List<Guid> ids)
