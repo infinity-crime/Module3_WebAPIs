@@ -37,9 +37,9 @@ namespace BooksKeeper.Authors.WebAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAuthorById([FromRoute] Guid id)
         {
-            var author = await _service.GetByIdAsync(id);
-
-            return HandleResult<AuthorResponse>(author);
+            //var author = await _service.GetByIdAsync(id);
+            //return HandleResult<AuthorResponse>(author);
+            return StatusCode(503);
         }
 
         [HttpGet("range")]

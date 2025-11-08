@@ -14,6 +14,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Polly;
+using Polly.Extensions.Http;
 
 namespace BooksKeeper.Application
 {
@@ -65,7 +67,10 @@ namespace BooksKeeper.Application
             services.AddHttpClient<IHttpAuthorService, HttpAuthorService>(client =>
             {
                 client.BaseAddress = new Uri("https://localhost:7120");
-            });
+            })
+            .AddTransientHttpErrorPolicy(p => p.WaitAndRetryAsync(3, _ => TimeSpan.FromSeconds(1)))
+            .AddPolicyHandler(HttpPolicyExtensions.HandleTransientHttpError()
+            .CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
 
             return services;
         }

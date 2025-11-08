@@ -153,11 +153,18 @@ namespace BooksKeeper.Application.Services
 
         public async Task<Result<AuthorResponse>> GetAuthorByIdFromAuthorsWebApi(Guid id)
         {
-            var author = await _httpAuthorService.GetByIdAsync(id);
-            if (author is null)
-                return Result<AuthorResponse>.Failure(Error.NotFound("AUTHOR_NOT_FOUND", $"Author with id - {id} not found"));
+            try
+            {
+                var author = await _httpAuthorService.GetByIdAsync(id);
+                if (author is null)
+                    return Result<AuthorResponse>.Failure(Error.NotFound("AUTHOR_NOT_FOUND", $"Author with id - {id} not found"));
 
-            return Result<AuthorResponse>.Success(author);
+                return Result<AuthorResponse>.Success(author);
+            }
+            catch (HttpRequestException ex)
+            {
+                return Result<AuthorResponse>.Failure(Error.Failure("SERVER_FAILURE", ex.Message));
+            }
         }
 
         public async Task<Result<BookResponse>> GetByIdAsync(Guid id)

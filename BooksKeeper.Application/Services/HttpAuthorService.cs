@@ -5,6 +5,8 @@ using BooksKeeper.Application.DTOs.Responses;
 using BooksKeeper.Application.Interfaces;
 using BooksKeeper.Application.Interfaces.Common;
 using BooksKeeper.Domain.Entities;
+using Microsoft.Extensions.Logging;
+using Polly.CircuitBreaker;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +22,9 @@ namespace BooksKeeper.Application.Services
         private readonly HttpClient _httpClient;
         private readonly JsonSerializerOptions _jsonSerializerOptions;
 
-        public HttpAuthorService(HttpClient httpClient)
+        private readonly ILogger<HttpAuthorService> _logger;
+
+        public HttpAuthorService(HttpClient httpClient, ILogger<HttpAuthorService> logger)
         {
             _httpClient = httpClient;
             _jsonSerializerOptions = new JsonSerializerOptions
@@ -28,6 +32,8 @@ namespace BooksKeeper.Application.Services
                 PropertyNameCaseInsensitive = true,
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             };
+
+            _logger = logger;
         }
 
         public async Task<AuthorDto?> CreateAsync(CreateAuthorRequest request)
@@ -60,15 +66,25 @@ namespace BooksKeeper.Application.Services
 
         public async Task<AuthorResponse?> GetByIdAsync(Guid id)
         {
-            using var res = await _httpClient.GetAsync($"/api/authors/{id}");
-            if(res.IsSuccessStatusCode)
+            try
             {
+                using var res = await _httpClient.GetAsync($"/api/authors/{id}");
+                res.EnsureSuccessStatusCode();
                 var successResult = await res.Content.ReadFromJsonAsync<SuccessResultDto<AuthorResponse>>(_jsonSerializerOptions);
-
-                return successResult!.Value;
+                return successResult?.Value;
             }
+            catch (BrokenCircuitException ex)
+            {
+                _logger.LogInformation(ex, "Authors circuit is open; returning unavailable.");
 
-            return null;
+                throw new HttpRequestException("Authors service unavailable, circuit open.", ex);
+            }
+            catch(HttpRequestException ex)
+            {
+                _logger.LogError(ex, "HTTP failure when calling Authors service.");
+
+                throw;
+            }
         }
 
         public async Task<IEnumerable<AuthorDto>> GetByIdRangeAsync(List<Guid> ids)
