@@ -20,6 +20,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BooksKeeper.Domain.Entities.Identity;
+using MassTransit;
 
 namespace BooksKeeper.Infrastructure
 {
@@ -70,6 +71,22 @@ namespace BooksKeeper.Infrastructure
             var mongoDatabaseName = configuration["Mongo:DatabaseName"];
 
             services.AddSingleton<IMongoClient>(new MongoClient(mongoConnectionString));
+
+            // Регистрация MassTransit
+            var rabbitUsername = configuration["RabbitMqOptions:Username"];
+            var rabbitPassword = configuration["RabbitMqOptions:Password"];
+
+            services.AddMassTransit(options =>
+            {
+                options.UsingRabbitMq((context, config) =>
+                {
+                    config.Host("localhost", 5672, "/", cfg => 
+                    { 
+                        cfg.Username(rabbitUsername!); 
+                        cfg.Password(rabbitPassword!); 
+                    });
+                });
+            });
 
             // регистрация фонового сервиса расчета среднего отзыва книги
             services.AddHostedService<AverageRatingCalculatorService>();
