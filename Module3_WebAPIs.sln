@@ -45,6 +45,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GrpcService.ClientService",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Orders.Contracts", "Orders.Contracts\Orders.Contracts.csproj", "{2EF1EEAB-2C70-465F-923F-E02D47C50429}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Orders.OrderWorkerService", "Orders.OrderWorkerService\Orders.OrderWorkerService.csproj", "{C5C23320-EE69-4E21-972A-48FAEF97941D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -115,6 +117,10 @@ Global
 		{2EF1EEAB-2C70-465F-923F-E02D47C50429}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2EF1EEAB-2C70-465F-923F-E02D47C50429}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2EF1EEAB-2C70-465F-923F-E02D47C50429}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5C23320-EE69-4E21-972A-48FAEF97941D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5C23320-EE69-4E21-972A-48FAEF97941D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5C23320-EE69-4E21-972A-48FAEF97941D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5C23320-EE69-4E21-972A-48FAEF97941D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

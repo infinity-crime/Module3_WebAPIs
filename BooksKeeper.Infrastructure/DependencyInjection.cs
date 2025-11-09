@@ -21,6 +21,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BooksKeeper.Domain.Entities.Identity;
 using MassTransit;
+using Orders.OrderWorkerService;
 
 namespace BooksKeeper.Infrastructure
 {
@@ -78,6 +79,7 @@ namespace BooksKeeper.Infrastructure
 
             services.AddMassTransit(options =>
             {
+                // Настраиваем подключение к кролику
                 options.UsingRabbitMq((context, config) =>
                 {
                     config.Host("localhost", 5672, "/", cfg => 
@@ -85,7 +87,12 @@ namespace BooksKeeper.Infrastructure
                         cfg.Username(rabbitUsername!); 
                         cfg.Password(rabbitPassword!); 
                     });
+
+                    config.ConfigureEndpoints(context);
                 });
+
+                // добавляем слушателя, чтобы MassTransit автоматом создал очередь и привязал к ней его
+                options.AddConsumer<SubmitOrderConsumer>();
             });
 
             // регистрация фонового сервиса расчета среднего отзыва книги

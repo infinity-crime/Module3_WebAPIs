@@ -24,6 +24,7 @@
   <ItemGroup>
     <ProjectReference Include="..\BooksKeeper.Application\BooksKeeper.Application.csproj" />
     <ProjectReference Include="..\BooksKeeper.Domain\BooksKeeper.Domain.csproj" />
+    <ProjectReference Include="..\Orders.OrderWorkerService\Orders.OrderWorkerService.csproj" />
   </ItemGroup>
 
 </Project>
