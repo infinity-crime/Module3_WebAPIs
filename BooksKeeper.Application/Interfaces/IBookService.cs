@@ -42,5 +42,12 @@ namespace BooksKeeper.Application.Interfaces
         /// </summary>
         /// <returns></returns>
         Task<IEnumerable<BookYearCountResponse>> GetCountBooksByYearAsync();
+
+        /// <summary>
+        /// Метод для тестирования общения двух WebAPI, который получает автора по Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Task<Result<AuthorResponse>> GetAuthorByIdFromAuthorsWebApi(Guid id);
     }
 }
