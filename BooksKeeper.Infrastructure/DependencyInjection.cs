@@ -22,6 +22,8 @@ using System.Threading.Tasks;
 using BooksKeeper.Domain.Entities.Identity;
 using MassTransit;
 using Orders.OrderWorkerService;
+using Orders.NotificationService;
+using Orders.InventoryService;
 
 namespace BooksKeeper.Infrastructure
 {
@@ -95,6 +97,8 @@ namespace BooksKeeper.Infrastructure
 
                 // добавляем слушателя, чтобы MassTransit автоматом создал очередь и привязал к ней его
                 options.AddConsumer<SubmitOrderConsumer>();
+                options.AddConsumer<NotificationServiceConsumer>();
+                options.AddConsumer<InventoryServiceConsumer>();
             });
 
             // регистрация фонового сервиса расчета среднего отзыва книги
