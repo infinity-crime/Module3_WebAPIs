@@ -20,6 +20,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BooksKeeper.Domain.Entities.Identity;
+using MassTransit;
+using Orders.OrderWorkerService;
+using Orders.NotificationService;
+using Orders.InventoryService;
 
 namespace BooksKeeper.Infrastructure
 {
@@ -70,6 +74,32 @@ namespace BooksKeeper.Infrastructure
             var mongoDatabaseName = configuration["Mongo:DatabaseName"];
 
             services.AddSingleton<IMongoClient>(new MongoClient(mongoConnectionString));
+
+            // Регистрация MassTransit
+            var rabbitUsername = configuration["RabbitMqOptions:Username"];
+            var rabbitPassword = configuration["RabbitMqOptions:Password"];
+
+            services.AddMassTransit(options =>
+            {
+                // Настраиваем подключение к кролику
+                options.UsingRabbitMq((context, config) =>
+                {
+                    config.Host("localhost", 5672, "/", cfg => 
+                    { 
+                        cfg.Username(rabbitUsername!); 
+                        cfg.Password(rabbitPassword!); 
+                    });
+
+                    config.ConfigureEndpoints(context);
+
+                    config.UseMessageRetry(r => r.Interval(5, TimeSpan.FromSeconds(2)));
+                });
+
+                // добавляем слушателя, чтобы MassTransit автоматом создал очередь и привязал к ней его
+                options.AddConsumer<SubmitOrderConsumer>();
+                options.AddConsumer<NotificationServiceConsumer>();
+                options.AddConsumer<InventoryServiceConsumer>();
+            });
 
             // регистрация фонового сервиса расчета среднего отзыва книги
             services.AddHostedService<AverageRatingCalculatorService>();

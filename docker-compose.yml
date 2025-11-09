@@ -35,7 +35,20 @@ services:
     volumes:
       - mongo-data:/data/db
 
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    hostname: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: rabbit
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq/mnesia
+
 volumes:
   BooksKeeper-Db-Data:
   redis-data:
-  mongo-data:  
+  mongo-data:
+  rabbitmq-data: 
