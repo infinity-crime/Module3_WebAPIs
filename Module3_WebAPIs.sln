@@ -32,14 +32,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BooksKeeper.IntegrationInMe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BooksKeeper.E2ETests", "tests\BooksKeeper.E2ETests\BooksKeeper.E2ETests.csproj", "{00C8EC2C-981B-4143-A370-0A3C27328C72}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Элементы решения", "Элементы решения", "{754FC069-D67B-A9D7-50A1-8D1CA196D8F1}"
-	ProjectSection(SolutionItems) = preProject
-		HttpClientVsHttpClientFactory.md = HttpClientVsHttpClientFactory.md
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BooksKeeper.Authors.WebAPI", "BooksKeeper.Authors.WebAPI\BooksKeeper.Authors.WebAPI.csproj", "{EB04AF5F-E70B-4C27-9F74-EDDC1EDE0C6D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "gRPCservices", "gRPCservices", "{63F145D0-B7BF-480C-B66C-321A59FF18F1}"
+	ProjectSection(SolutionItems) = preProject
+		HttpClientVsHttpClientFactory.md = HttpClientVsHttpClientFactory.md
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GrpcService.UserService", "gRPCservices\GrpcService.UserService\GrpcService.UserService.csproj", "{3317EE13-6782-460B-9AA5-08643F96C0D4}"
 EndProject
