@@ -4,6 +4,7 @@ using Orders.OrderWorkerService.Entities;
 using Orders.OrderWorkerService.Services;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,6 +22,8 @@ namespace Orders.OrderWorkerService
 
         public async Task Consume(ConsumeContext<SubmitOrderCommand> context)
         {
+            throw new Exception();
+
             var command = context.Message;
             Console.WriteLine($"Processing order: {command.OrderId}");
 

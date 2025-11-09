@@ -89,6 +89,8 @@ namespace BooksKeeper.Infrastructure
                     });
 
                     config.ConfigureEndpoints(context);
+
+                    config.UseMessageRetry(r => r.Interval(5, TimeSpan.FromSeconds(2)));
                 });
 
                 // добавляем слушателя, чтобы MassTransit автоматом создал очередь и привязал к ней его
