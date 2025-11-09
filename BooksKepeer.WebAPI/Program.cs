@@ -8,6 +8,7 @@ using BooksKepeer.WebAPI.SeedMethods;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.OpenApi.Models;
+using Orders.OrderWorkerService.Services;
 using StackExchange.Redis;
 using Swashbuckle.AspNetCore;
 using System.Reflection;
@@ -92,6 +93,8 @@ builder.Services.AddSwaggerGen(o =>
 
 // Регистрация health checks
 builder.Services.AddHealthChecks();
+
+builder.Services.AddSingleton<IOrderService, OrderService>();
 
 var app = builder.Build();
 

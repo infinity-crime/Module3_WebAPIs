@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Orders.Contracts.Commands;
+using Orders.OrderWorkerService.Services;
 
 namespace BooksKepeer.Books.WebAPI.Controllers
 {
@@ -10,10 +11,18 @@ namespace BooksKepeer.Books.WebAPI.Controllers
     public class OrdersController : ControllerBase
     {
         private readonly IBus _bus;
+        private readonly IOrderService _orderService;
 
-        public OrdersController(IBus bus)
+        public OrdersController(IBus bus, IOrderService orderService)
         {
             _bus = bus;
+            _orderService = orderService;
+        }
+
+        [HttpGet("/all-orders")]
+        public IActionResult GetAll()
+        {
+            return Ok(_orderService.GetAllOrders());
         }
 
         [HttpPost("order")]
