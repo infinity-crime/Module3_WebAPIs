@@ -26,6 +26,7 @@
   <ItemGroup>
     <ProjectReference Include="..\BooksKeeper.Application\BooksKeeper.Application.csproj" />
     <ProjectReference Include="..\BooksKeeper.Infrastructure\BooksKeeper.Infrastructure.csproj" />
+    <ProjectReference Include="..\Orders.Contracts\Orders.Contracts.csproj" />
   </ItemGroup>
 
 </Project>
